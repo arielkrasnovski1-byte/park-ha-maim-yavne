@@ -644,9 +644,6 @@ function initContactForm() {
         if (!message) {
             setFieldError(messageField, t('required'));
             hasError = true;
-        } else if (message.length < 10) {
-            setFieldError(messageField, t('messageShort'));
-            hasError = true;
         }
 
         if (hasError) {
