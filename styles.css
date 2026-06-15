@@ -398,6 +398,10 @@ button {
     margin-top: 2px;
 }
 
+.nav {
+    margin-inline: auto;
+}
+
 .nav-list {
     display: flex;
     gap: 4px;
