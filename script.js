@@ -216,32 +216,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- Contact Form (if exists) ---
-    const contactForm = document.getElementById('contactForm');
-
-    if (contactForm) {
-        contactForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const name = document.getElementById('name')?.value || '';
-            const submitBtn = contactForm.querySelector('button[type="submit"]');
-            const originalContent = submitBtn.innerHTML;
-
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> שולח...';
-
-            setTimeout(() => {
-                const currentLang = localStorage.getItem('parkLang') || 'he';
-                const msg = currentLang === 'en'
-                    ? `Thanks ${name}! Your message was sent successfully. We'll get back to you soon.`
-                    : `תודה ${name}! ההודעה נשלחה בהצלחה. נחזור אליך בהקדם.`;
-                showNotification(msg, 'success');
-                contactForm.reset();
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalContent;
-            }, 1500);
-        });
-    }
+    // --- Contact Form ---
+    // The contact form is fully handled by initContactForm() in public-data.js
+    // (real validation + write to Firestore). Do NOT add a handler here — a
+    // second submit listener would fire alongside it and show a fake "sent"
+    // message even when validation fails or the write never happens.
 
     // --- FAQ Accordion ---
     document.querySelectorAll('.faq-item').forEach(item => {
