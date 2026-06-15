@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>תצוגה מקדימה - סגנונות לכותרת</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800;900&family=Heebo:wght@900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Assistant', sans-serif;
+            background: #f5f5f5;
+            padding: 30px 20px;
+        }
+        .page-title {
+            text-align: center;
+            color: #0066cc;
+            font-size: 32px;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+        .page-sub {
+            text-align: center;
+            color: #555;
+            margin-bottom: 40px;
+            font-size: 17px;
+        }
+        .preview-card {
+            max-width: 1100px;
+            margin: 0 auto 30px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        .preview-label {
+            background: #0066cc;
+            color: white;
+            padding: 18px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .preview-label .num {
+            background: rgba(255,255,255,0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+        }
+        .preview-label h3 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .hero-preview {
+            height: 280px;
+            position: relative;
+            overflow: hidden;
+            background-image: url('images/new/aerial-park-wide.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        .hero-preview::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0,51,102,0.3) 0%, rgba(0,102,204,0.12) 50%, rgba(0,180,216,0.18) 100%);
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 60px;
+            color: white;
+        }
+        .hero-line1 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .hero-title {
+            font-size: 64px;
+            font-weight: 900;
+            line-height: 1;
+            display: inline-block;
+        }
+        .preview-info {
+            padding: 16px 24px;
+            background: #f8fafc;
+            color: #555;
+            font-size: 14px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .recommendation {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        /* ============================================
+           Style 1: AURORA HOLOGRAPHIC
+           ============================================ */
+        .style-1 .hero-title {
+            background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 25%, #ec4899 50%, #f59e0b 75%, #06b6d4 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: holo-flow 4s linear infinite;
+            filter: drop-shadow(0 4px 16px rgba(139, 92, 246, 0.6));
+        }
+        @keyframes holo-flow {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* ============================================
+           Style 2: METALLIC GOLD
+           ============================================ */
+        .style-2 .hero-title {
+            background: linear-gradient(135deg, #92400e 0%, #fbbf24 30%, #fef3c7 50%, #fbbf24 70%, #92400e 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gold-shine 5s linear infinite;
+            filter: drop-shadow(0 4px 12px rgba(251, 191, 36, 0.7));
+        }
+        @keyframes gold-shine {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* ============================================
+           Style 3: OCEAN WATER
+           ============================================ */
+        .style-3 .hero-title {
+            background: linear-gradient(180deg, #ffffff 0%, #67e8f9 30%, #06b6d4 60%, #0284c7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 4px 20px rgba(6, 182, 212, 0.6)) drop-shadow(0 0 30px rgba(255, 255, 255, 0.4));
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ============================================
+           Style 4: SUNSET LUXURY
+           ============================================ */
+        .style-4 .hero-title {
+            background: linear-gradient(135deg, #ff006e 0%, #fb5607 30%, #ffbe0b 60%, #fde047 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 4px 16px rgba(251, 86, 7, 0.7)) drop-shadow(0 8px 30px rgba(255, 0, 110, 0.4));
+        }
+
+        /* ============================================
+           Style 5: PREMIUM DIAMOND (3D)
+           ============================================ */
+        .style-5 .hero-title {
+            color: #ffffff;
+            text-shadow:
+                0 1px 0 #ccc,
+                0 2px 0 #c9c9c9,
+                0 3px 0 #bbb,
+                0 4px 0 #b9b9b9,
+                0 5px 0 #aaa,
+                0 6px 1px rgba(0, 0, 0, 0.1),
+                0 0 5px rgba(0, 0, 0, 0.1),
+                0 1px 3px rgba(0, 0, 0, 0.3),
+                0 3px 5px rgba(0, 0, 0, 0.2),
+                0 5px 10px rgba(0, 0, 0, 0.25),
+                0 10px 10px rgba(0, 0, 0, 0.2),
+                0 20px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ============================================
+           Style 6: NEON ELECTRIC
+           ============================================ */
+        .style-6 .hero-title {
+            color: #fff;
+            text-shadow:
+                0 0 5px #fff,
+                0 0 10px #fff,
+                0 0 20px #06b6d4,
+                0 0 40px #06b6d4,
+                0 0 60px #0284c7,
+                0 0 80px #0284c7,
+                0 0 100px #0284c7;
+            animation: neon-pulse 2s ease-in-out infinite;
+        }
+        @keyframes neon-pulse {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="page-title">✨ בחר סגנון יוקרתי לכותרת</h1>
+    <p class="page-sub">6 רעיונות מעוצבים - מהיוקרתי לחדשני</p>
+
+    <!-- Style 1: Aurora Holographic -->
+    <div class="preview-card">
+        <div class="preview-label">
+            <div class="num">1</div>
+            <h3>🌈 Aurora הולוגרפי - חדשני ביותר</h3>
+        </div>
+        <div class="hero-preview style-1">
+            <div class="hero-content">
+                <div class="hero-line1">ברוכים הבאים ל</div>
+                <h2 class="hero-title">פארק המים יבנה</h2>
+            </div>
+        </div>
+        <div class="preview-info">
+            ✨ צבעים זורמים מטורקיז → סגול → ורוד → זהוב - אנימציה רכה
+        </div>
+    </div>
+
+    <!-- Style 2: Metallic Gold -->
+    <div class="preview-card">
+        <div class="preview-label">
+            <div class="num">2</div>
+            <h3>🏆 זהב מטאלי - יוקרה קלאסית <span class="recommendation">🌟 פרימיום</span></h3>
+        </div>
+        <div class="hero-preview style-2">
+            <div class="hero-content">
+                <div class="hero-line1">ברוכים הבאים ל</div>
+                <h2 class="hero-title">פארק המים יבנה</h2>
+            </div>
+        </div>
+        <div class="preview-info">
+            ✨ מבריק כמו זהב אמיתי - תחושה של מוצר יוקרה
+        </div>
+    </div>
+
+    <!-- Style 3: Ocean Water -->
+    <div class="preview-card">
+        <div class="preview-label">
+            <div class="num">3</div>
+            <h3>🌊 מי ים - הכי מתאים לפארק מים! <span class="recommendation">💧 תמטי</span></h3>
+        </div>
+        <div class="hero-preview style-3">
+            <div class="hero-content">
+                <div class="hero-line1">ברוכים הבאים ל</div>
+                <h2 class="hero-title">פארק המים יבנה</h2>
+            </div>
+        </div>
+        <div class="preview-info">
+            ✨ מלבן זוהר למעלה ועד טורקיז עמוק למטה - כמו מים זורמים
+        </div>
+    </div>
+
+    <!-- Style 4: Sunset Luxury -->
+    <div class="preview-card">
+        <div class="preview-label">
+            <div class="num">4</div>
+            <h3>🌅 שקיעה יוקרתית</h3>
+        </div>
+        <div class="hero-preview style-4">
+            <div class="hero-content">
+                <div class="hero-line1">ברוכים הבאים ל</div>
+                <h2 class="hero-title">פארק המים יבנה</h2>
+            </div>
+        </div>
+        <div class="preview-info">
+            ✨ ורוד-אדום → כתום → זהוב - חם ומזמין
+        </div>
+    </div>
+
+    <!-- Style 5: Diamond 3D -->
+    <div class="preview-card">
+        <div class="preview-label">
+            <div class="num">5</div>
+            <h3>💎 יהלום תלת-מימדי</h3>
+        </div>
+        <div class="hero-preview style-5">
+            <div class="hero-content">
+                <div class="hero-line1">ברוכים הבאים ל</div>
+                <h2 class="hero-title">פארק המים יבנה</h2>
+            </div>
+        </div>
+        <div class="preview-info">
+            ✨ אפקט 3D עם שכבות צל - אלגנטי וקלאסי
+        </div>
+    </div>
+
+    <!-- Style 6: Neon Electric -->
+    <div class="preview-card">
+        <div class="preview-label">
+            <div class="num">6</div>
+            <h3>⚡ ניאון חשמלי</h3>
+        </div>
+        <div class="hero-preview style-6">
+            <div class="hero-content">
+                <div class="hero-line1">ברוכים הבאים ל</div>
+                <h2 class="hero-title">פארק המים יבנה</h2>
+            </div>
+        </div>
+        <div class="preview-info">
+            ✨ ניאון מודרני כחול-טורקיז עם פעימה - חדש ומגניב
+        </div>
+    </div>
+
+    <div style="text-align: center; padding: 40px; color: #666;">
+        <h2 style="color: #0066cc; margin-bottom: 16px; font-size: 24px;">🎯 איך לבחור?</h2>
+        <p style="font-size: 17px; line-height: 1.7; max-width: 700px; margin: 0 auto;">
+            תגיד לי <strong>מספר אחד</strong> שאתה הכי מעדיף.<br>
+            אפשר גם <strong>לערבב</strong> (למשל: "סגנון 3 אבל בלי האנימציה" או "סגנון 2 בצבעים אחרים").
+        </p>
+        <div style="margin-top: 30px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            <div style="background: #dcfce7; padding: 16px 20px; border-radius: 12px; max-width: 280px;">
+                <strong style="color: #15803d;">💎 ההמלצה שלי לפארק מים:</strong>
+                <p style="color: #166534; margin-top: 6px; font-size: 14px;">סגנון <strong>3 (מי ים)</strong> - תמטי ויפהפה</p>
+            </div>
+            <div style="background: #fef3c7; padding: 16px 20px; border-radius: 12px; max-width: 280px;">
+                <strong style="color: #92400e;">🏆 הכי יוקרתי:</strong>
+                <p style="color: #78350f; margin-top: 6px; font-size: 14px;">סגנון <strong>2 (זהב מטאלי)</strong> - VIP feel</p>
+            </div>
+            <div style="background: #fce7f3; padding: 16px 20px; border-radius: 12px; max-width: 280px;">
+                <strong style="color: #be185d;">🚀 הכי חדשני:</strong>
+                <p style="color: #9f1239; margin-top: 6px; font-size: 14px;">סגנון <strong>1 (Aurora)</strong> - מודרני ומפתיע</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

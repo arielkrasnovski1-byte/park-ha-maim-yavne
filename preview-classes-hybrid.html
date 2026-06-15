@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>שילוב 1+4 - חוגים</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Poppins:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Assistant', sans-serif;
+            background: #f5f5f5;
+            padding: 40px 20px;
+            direction: rtl;
+            color: #0f172a;
+        }
+        h1 {
+            text-align: center;
+            color: #0066cc;
+            font-size: 36px;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+        .sub {
+            text-align: center;
+            color: #555;
+            margin-bottom: 50px;
+            font-size: 17px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto 60px;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+        }
+        .option-header {
+            background: linear-gradient(135deg, #0066cc, #00b4d8);
+            color: white;
+            padding: 28px 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .option-header .num {
+            background: rgba(255,255,255,0.2);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 22px;
+        }
+        .option-header h2 {
+            font-size: 26px;
+            font-weight: 800;
+            flex: 1;
+            margin-right: 16px;
+        }
+        .demo {
+            padding: 32px;
+            background: linear-gradient(180deg, #f8fafc 0%, white 100%);
+        }
+
+        /* ============================================
+           Day Pills (from Option 4)
+           ============================================ */
+        .day-pills {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 28px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .day-pill {
+            padding: 12px 18px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            text-align: center;
+            min-width: 105px;
+            color: #475569;
+            transition: all 0.3s;
+        }
+        .day-pill:hover {
+            border-color: #0066cc;
+            transform: translateY(-2px);
+        }
+        .day-pill.active {
+            background: linear-gradient(135deg, #0066cc, #00b4d8);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 8px 20px rgba(0, 102, 204, 0.35);
+            transform: translateY(-2px);
+        }
+        .day-pill .pill-day {
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 2px;
+        }
+        .day-pill .pill-count {
+            font-size: 11px;
+            opacity: 0.7;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* ============================================
+           Cards Grid (Hybrid A)
+           ============================================ */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .class-card {
+            background: white;
+            border-radius: 16px;
+            padding: 22px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .class-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 32px rgba(0,0,0,0.08);
+            border-color: #0066cc;
+        }
+        .class-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, #0066cc, #00b4d8);
+        }
+        .class-time {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #b45309;
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-family: 'Poppins', sans-serif;
+        }
+        .class-emoji {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            box-shadow: 0 6px 14px rgba(2, 132, 199, 0.3);
+            transition: all 0.3s;
+        }
+        .class-card:hover .class-emoji {
+            transform: rotate(-8deg) scale(1.1);
+            box-shadow: 0 10px 20px rgba(0, 102, 204, 0.4);
+        }
+        .class-emoji.water { background: linear-gradient(135deg, #06b6d4, #0891b2); box-shadow: 0 6px 14px rgba(8, 145, 178, 0.4); }
+        .class-emoji.dance { background: linear-gradient(135deg, #ec4899, #db2777); box-shadow: 0 6px 14px rgba(219, 39, 119, 0.4); }
+        .class-emoji.fitness { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 6px 14px rgba(217, 119, 6, 0.4); }
+        .class-emoji.yoga { background: linear-gradient(135deg, #8b5cf6, #7c3aed); box-shadow: 0 6px 14px rgba(124, 58, 237, 0.4); }
+        .class-emoji.health { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 6px 14px rgba(220, 38, 38, 0.4); }
+        .class-emoji.martial { background: linear-gradient(135deg, #475569, #334155); box-shadow: 0 6px 14px rgba(51, 65, 85, 0.4); }
+        .class-emoji.zen { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 6px 14px rgba(5, 150, 105, 0.4); }
+        .class-emoji.bone { background: linear-gradient(135deg, #f97316, #ea580c); box-shadow: 0 6px 14px rgba(234, 88, 12, 0.4); }
+        .class-emoji.folk { background: linear-gradient(135deg, #b45309, #92400e); box-shadow: 0 6px 14px rgba(146, 64, 14, 0.4); }
+        .class-name {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+            padding-left: 50px;
+        }
+        .class-inst {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .class-inst i {
+            color: #94a3b8;
+        }
+        .class-price {
+            border-top: 1px dashed #e2e8f0;
+            padding-top: 12px;
+            font-weight: 700;
+            color: #0066cc;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .class-price.free {
+            color: #16a34a;
+        }
+        .class-price.members {
+            color: #f59e0b;
+        }
+
+        /* ============================================
+           Timeline-Cards Mix (Hybrid B)
+           ============================================ */
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+            position: relative;
+        }
+        .tl-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px 20px 20px 28px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+            position: relative;
+            display: flex;
+            align-items: stretch;
+            gap: 16px;
+            overflow: hidden;
+        }
+        .tl-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+            border-color: #0066cc;
+        }
+        .tl-card-time {
+            background: linear-gradient(135deg, #0066cc, #00b4d8);
+            color: white;
+            padding: 12px 14px;
+            border-radius: 12px;
+            min-width: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+        .tl-card-time .tl-start {
+            font-size: 17px;
+            line-height: 1;
+        }
+        .tl-card-time .tl-sep {
+            font-size: 10px;
+            margin: 4px 0;
+            opacity: 0.7;
+        }
+        .tl-card-time .tl-end {
+            font-size: 13px;
+            opacity: 0.85;
+            line-height: 1;
+        }
+        .tl-card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .tl-card-name {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tl-card-name .tl-emoji {
+            font-size: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            color: white;
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+        }
+        .tl-card:hover .tl-emoji {
+            transform: rotate(-8deg) scale(1.1);
+        }
+        .tl-emoji.water { background: linear-gradient(135deg, #06b6d4, #0891b2); box-shadow: 0 4px 10px rgba(8, 145, 178, 0.4); }
+        .tl-emoji.dance { background: linear-gradient(135deg, #ec4899, #db2777); box-shadow: 0 4px 10px rgba(219, 39, 119, 0.4); }
+        .tl-emoji.fitness { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 10px rgba(217, 119, 6, 0.4); }
+        .tl-emoji.yoga { background: linear-gradient(135deg, #8b5cf6, #7c3aed); box-shadow: 0 4px 10px rgba(124, 58, 237, 0.4); }
+        .tl-emoji.health { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 10px rgba(220, 38, 38, 0.4); }
+        .tl-emoji.martial { background: linear-gradient(135deg, #475569, #334155); box-shadow: 0 4px 10px rgba(51, 65, 85, 0.4); }
+        .tl-emoji.zen { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 10px rgba(5, 150, 105, 0.4); }
+        .tl-emoji.bone { background: linear-gradient(135deg, #f97316, #ea580c); box-shadow: 0 4px 10px rgba(234, 88, 12, 0.4); }
+        .tl-emoji.folk { background: linear-gradient(135deg, #b45309, #92400e); box-shadow: 0 4px 10px rgba(146, 64, 14, 0.4); }
+        .tl-card-inst {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .tl-card-inst i {
+            color: #94a3b8;
+            font-size: 12px;
+        }
+        .tl-card-price {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            align-self: flex-start;
+            background: #f0f9ff;
+            color: #0284c7;
+        }
+        .tl-card-price.free {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+        .tl-card-price.members {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        /* Recommendation */
+        .recommend-box {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 14px 20px;
+            border-radius: 12px;
+            margin-top: 28px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>✨ שילוב 1 + 4</h1>
+    <p class="sub">2 וריאציות של שילוב טאבים-יום מודרניים עם תצוגת כרטיסים</p>
+
+    <!-- ===== VARIANT A ===== -->
+    <div class="container">
+        <div class="option-header">
+            <div class="num">A</div>
+            <h2>🎯 וריאציה A: כפתורי יום + כרטיסי שעה צבעוניים</h2>
+        </div>
+        <div class="demo">
+            <div class="day-pills">
+                <div class="day-pill active">
+                    <div class="pill-day">ראשון</div>
+                    <div class="pill-count">8 חוגים</div>
+                </div>
+                <div class="day-pill">
+                    <div class="pill-day">שני</div>
+                    <div class="pill-count">12 חוגים</div>
+                </div>
+                <div class="day-pill">
+                    <div class="pill-day">שלישי</div>
+                    <div class="pill-count">10 חוגים</div>
+                </div>
+                <div class="day-pill">
+                    <div class="pill-day">רביעי</div>
+                    <div class="pill-count">9 חוגים</div>
+                </div>
+                <div class="day-pill">
+                    <div class="pill-day">חמישי</div>
+                    <div class="pill-count">8 חוגים</div>
+                </div>
+                <div class="day-pill">
+                    <div class="pill-day">שישי</div>
+                    <div class="pill-count">5 חוגים</div>
+                </div>
+                <div class="day-pill">
+                    <div class="pill-day">שבת</div>
+                    <div class="pill-count">3 חוגים</div>
+                </div>
+            </div>
+
+            <div class="cards-grid">
+                <div class="class-card">
+                    <div class="class-emoji yoga"><i class="fas fa-child-reaching"></i></div>
+                    <span class="class-time">07:45-08:30</span>
+                    <div class="class-name">יציבה ומתיחות</div>
+                    <div class="class-inst"><i class="fas fa-user"></i>חיה</div>
+                    <div class="class-price members"><i class="fas fa-star"></i>למנויים בלבד</div>
+                </div>
+                <div class="class-card">
+                    <div class="class-emoji dance"><i class="fas fa-music"></i></div>
+                    <span class="class-time">18:00-19:00</span>
+                    <div class="class-name">זומבה</div>
+                    <div class="class-inst"><i class="fas fa-user"></i>ליאורה</div>
+                    <div class="class-price"><i class="fas fa-tag"></i>220 ₪</div>
+                </div>
+                <div class="class-card">
+                    <div class="class-emoji dance"><i class="fas fa-record-vinyl"></i></div>
+                    <span class="class-time">18:00-19:00</span>
+                    <div class="class-name">דיאט דאנס</div>
+                    <div class="class-inst"><i class="fas fa-user"></i>רחל</div>
+                    <div class="class-price"><i class="fas fa-tag"></i>220 ₪</div>
+                </div>
+                <div class="class-card">
+                    <div class="class-emoji water"><i class="fas fa-water"></i></div>
+                    <span class="class-time">19:00-19:45</span>
+                    <div class="class-name">התעמלות מים</div>
+                    <div class="class-inst"><i class="fas fa-user"></i>רחל</div>
+                    <div class="class-price"><i class="fas fa-tag"></i>200/300/400 ₪</div>
+                </div>
+                <div class="class-card">
+                    <div class="class-emoji fitness"><i class="fas fa-person-running"></i></div>
+                    <span class="class-time">19:00-20:00</span>
+                    <div class="class-name">אירובי ועיצוב</div>
+                    <div class="class-inst"><i class="fas fa-user"></i>שרי</div>
+                    <div class="class-price"><i class="fas fa-tag"></i>220 ₪</div>
+                </div>
+                <div class="class-card">
+                    <div class="class-emoji folk"><i class="fas fa-guitar"></i></div>
+                    <span class="class-time">19:00-23:00</span>
+                    <div class="class-name">ריקודי עם</div>
+                    <div class="class-inst"><i class="fas fa-user"></i>איציק בן דהן</div>
+                    <div class="class-price"><i class="fas fa-tag"></i>25/35 ₪</div>
+                </div>
+                <div class="class-card">
+                    <div class="class-emoji yoga"><i class="fas fa-spa"></i></div>
+                    <span class="class-time">20:00-21:00</span>
+                    <div class="class-name">פילאטיס</div>
+                    <div class="class-inst"><i class="fas fa-user"></i>דליה</div>
+                    <div class="class-price"><i class="fas fa-tag"></i>220 ₪</div>
+                </div>
+                <div class="class-card">
+                    <div class="class-emoji fitness"><i class="fas fa-dumbbell"></i></div>
+                    <span class="class-time">21:00-21:45</span>
+                    <div class="class-name">פונקציונלי</div>
+                    <div class="class-inst"><i class="fas fa-user"></i>אבי נחמן</div>
+                    <div class="class-price"><i class="fas fa-tag"></i>180 ₪</div>
+                </div>
+            </div>
+
+            <div class="recommend-box">
+                ✨ <strong>וריאציה A:</strong> שעות בתוויות צהובות עליונות + פס כחול בצד הכרטיס. נקי ופשוט.
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== VARIANT B ===== -->
+    <div class="container">
+        <div class="option-header">
+            <div class="num">B</div>
+            <h2>💎 וריאציה B: כפתורי יום + תיבת שעה צבעונית</h2>
+        </div>
+        <div class="demo">
+            <div class="day-pills">
+                <div class="day-pill active">
+                    <div class="pill-day">ראשון</div>
+                    <div class="pill-count">8 חוגים</div>
+                </div>
+                <div class="day-pill">
+                    <div class="pill-day">שני</div>
+                    <div class="pill-count">12 חוגים</div>
+                </div>
+                <div class="day-pill">
+                    <div class="pill-day">שלישי</div>
+                    <div class="pill-count">10 חוגים</div>
+                </div>
+                <div class="day-pill">
+                    <div class="pill-day">רביעי</div>
+                    <div class="pill-count">9 חוגים</div>
+                </div>
+                <div class="day-pill">
+                    <div class="pill-day">חמישי</div>
+                    <div class="pill-count">8 חוגים</div>
+                </div>
+                <div class="day-pill">
+                    <div class="pill-day">שישי</div>
+                    <div class="pill-count">5 חוגים</div>
+                </div>
+                <div class="day-pill">
+                    <div class="pill-day">שבת</div>
+                    <div class="pill-count">3 חוגים</div>
+                </div>
+            </div>
+
+            <div class="timeline-grid">
+                <div class="tl-card">
+                    <div class="tl-card-time">
+                        <div class="tl-start">07:45</div>
+                        <div class="tl-sep">עד</div>
+                        <div class="tl-end">08:30</div>
+                    </div>
+                    <div class="tl-card-body">
+                        <div class="tl-card-name"><span class="tl-emoji yoga"><i class="fas fa-child-reaching"></i></span>יציבה ומתיחות</div>
+                        <div class="tl-card-inst"><i class="fas fa-user"></i>חיה</div>
+                        <div class="tl-card-price members"><i class="fas fa-star"></i>למנויים בלבד</div>
+                    </div>
+                </div>
+                <div class="tl-card">
+                    <div class="tl-card-time">
+                        <div class="tl-start">18:00</div>
+                        <div class="tl-sep">עד</div>
+                        <div class="tl-end">19:00</div>
+                    </div>
+                    <div class="tl-card-body">
+                        <div class="tl-card-name"><span class="tl-emoji dance"><i class="fas fa-music"></i></span>זומבה</div>
+                        <div class="tl-card-inst"><i class="fas fa-user"></i>ליאורה</div>
+                        <div class="tl-card-price"><i class="fas fa-tag"></i>220 ₪</div>
+                    </div>
+                </div>
+                <div class="tl-card">
+                    <div class="tl-card-time">
+                        <div class="tl-start">18:00</div>
+                        <div class="tl-sep">עד</div>
+                        <div class="tl-end">19:00</div>
+                    </div>
+                    <div class="tl-card-body">
+                        <div class="tl-card-name"><span class="tl-emoji dance"><i class="fas fa-record-vinyl"></i></span>דיאט דאנס</div>
+                        <div class="tl-card-inst"><i class="fas fa-user"></i>רחל</div>
+                        <div class="tl-card-price"><i class="fas fa-tag"></i>220 ₪</div>
+                    </div>
+                </div>
+                <div class="tl-card">
+                    <div class="tl-card-time">
+                        <div class="tl-start">19:00</div>
+                        <div class="tl-sep">עד</div>
+                        <div class="tl-end">19:45</div>
+                    </div>
+                    <div class="tl-card-body">
+                        <div class="tl-card-name"><span class="tl-emoji water"><i class="fas fa-water"></i></span>התעמלות מים</div>
+                        <div class="tl-card-inst"><i class="fas fa-user"></i>רחל</div>
+                        <div class="tl-card-price"><i class="fas fa-tag"></i>200/300/400 ₪</div>
+                    </div>
+                </div>
+                <div class="tl-card">
+                    <div class="tl-card-time">
+                        <div class="tl-start">19:00</div>
+                        <div class="tl-sep">עד</div>
+                        <div class="tl-end">20:00</div>
+                    </div>
+                    <div class="tl-card-body">
+                        <div class="tl-card-name"><span class="tl-emoji fitness"><i class="fas fa-person-running"></i></span>אירובי ועיצוב</div>
+                        <div class="tl-card-inst"><i class="fas fa-user"></i>שרי</div>
+                        <div class="tl-card-price"><i class="fas fa-tag"></i>220 ₪</div>
+                    </div>
+                </div>
+                <div class="tl-card">
+                    <div class="tl-card-time">
+                        <div class="tl-start">19:00</div>
+                        <div class="tl-sep">עד</div>
+                        <div class="tl-end">23:00</div>
+                    </div>
+                    <div class="tl-card-body">
+                        <div class="tl-card-name"><span class="tl-emoji folk"><i class="fas fa-guitar"></i></span>ריקודי עם</div>
+                        <div class="tl-card-inst"><i class="fas fa-user"></i>איציק בן דהן</div>
+                        <div class="tl-card-price"><i class="fas fa-tag"></i>25/35 ₪</div>
+                    </div>
+                </div>
+                <div class="tl-card">
+                    <div class="tl-card-time">
+                        <div class="tl-start">20:00</div>
+                        <div class="tl-sep">עד</div>
+                        <div class="tl-end">21:00</div>
+                    </div>
+                    <div class="tl-card-body">
+                        <div class="tl-card-name"><span class="tl-emoji yoga"><i class="fas fa-spa"></i></span>פילאטיס</div>
+                        <div class="tl-card-inst"><i class="fas fa-user"></i>דליה</div>
+                        <div class="tl-card-price"><i class="fas fa-tag"></i>220 ₪</div>
+                    </div>
+                </div>
+                <div class="tl-card">
+                    <div class="tl-card-time">
+                        <div class="tl-start">21:00</div>
+                        <div class="tl-sep">עד</div>
+                        <div class="tl-end">21:45</div>
+                    </div>
+                    <div class="tl-card-body">
+                        <div class="tl-card-name"><span class="tl-emoji fitness"><i class="fas fa-dumbbell"></i></span>פונקציונלי</div>
+                        <div class="tl-card-inst"><i class="fas fa-user"></i>אבי נחמן</div>
+                        <div class="tl-card-price"><i class="fas fa-tag"></i>180 ₪</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommend-box">
+                ✨ <strong>וריאציה B:</strong> תיבת שעה גדולה בצד עם גרדיאנט כחול בולט. כל הפרטים בעין אחת. הכי "פרימיום".
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; padding: 40px; color: #666;">
+        <h2 style="color: #0066cc; margin-bottom: 16px; font-size: 28px;">🎯 איזו וריאציה?</h2>
+        <p style="font-size: 17px; line-height: 1.7; max-width: 700px; margin: 0 auto 30px;">
+            תגיד לי <strong>A או B</strong> ואני אטמיע ב-events.html.<br>
+            אפשר גם לערבב או לבקש שינויים נוספים.
+        </p>
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            <div style="background: #dbeafe; padding: 20px 28px; border-radius: 16px; max-width: 280px;">
+                <strong style="color: #1e40af; font-size: 18px;">📦 וריאציה A</strong>
+                <p style="color: #1e3a8a; margin-top: 8px; font-size: 14px;">כרטיסים נקיים, שעה בתווית קטנה. נקי וקלאסי.</p>
+            </div>
+            <div style="background: #ede9fe; padding: 20px 28px; border-radius: 16px; max-width: 280px;">
+                <strong style="color: #6d28d9; font-size: 18px;">💎 וריאציה B</strong>
+                <p style="color: #5b21b6; margin-top: 8px; font-size: 14px;">תיבת שעה גדולה בצד. בולט ופרימיום.</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

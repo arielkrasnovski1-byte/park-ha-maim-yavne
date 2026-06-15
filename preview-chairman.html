@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>תצוגה מקדימה - עיטור היו"ר</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Assistant', sans-serif;
+            background: #f5f5f5;
+            padding: 40px 20px;
+            direction: rtl;
+        }
+        h1 {
+            text-align: center;
+            color: #0066cc;
+            font-size: 32px;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+        .sub {
+            text-align: center;
+            color: #555;
+            margin-bottom: 40px;
+            font-size: 17px;
+        }
+        .grid {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 30px;
+        }
+        .option {
+            background: white;
+            border-radius: 16px;
+            padding: 50px 28px 28px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            position: relative;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .option:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+            border-color: #0066cc;
+        }
+        .num {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: #0066cc;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+        }
+        .badge {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+        .avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 700;
+            margin: 0 auto 16px;
+            box-shadow: 0 8px 24px rgba(251, 191, 36, 0.4);
+        }
+        .name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+        .role {
+            color: #d97706;
+            font-size: 14px;
+            font-weight: 800;
+        }
+        .desc {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px dashed #e2e8f0;
+            color: #666;
+            font-size: 13px;
+        }
+        .label {
+            position: absolute;
+            top: 16px;
+            right: 60px;
+            background: #f1f5f9;
+            color: #475569;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* Badge Styles */
+        .b-crown { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+        .b-star { background: linear-gradient(135deg, #facc15, #eab308); }
+        .b-medal { background: linear-gradient(135deg, #fb923c, #f97316); }
+        .b-trophy { background: linear-gradient(135deg, #ca8a04, #facc15); }
+        .b-shield { background: linear-gradient(135deg, #0066cc, #00b4d8); }
+        .b-handshake { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .b-tie { background: linear-gradient(135deg, #1e293b, #475569); }
+        .b-compass { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+        .b-quote { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .b-text {
+            background: linear-gradient(135deg, #ca8a04, #facc15);
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>👑 בחר עיטור חדש ליו"ר</h1>
+    <p class="sub">10 אפשרויות מעוצבות במקום הכתר</p>
+
+    <div class="grid">
+
+        <!-- Current: Crown -->
+        <div class="option">
+            <span class="num">0</span>
+            <span class="label">נוכחי</span>
+            <div class="badge b-crown"><i class="fas fa-crown"></i></div>
+            <div class="avatar">דא</div>
+            <div class="name">דוד אנגל</div>
+            <div class="role">יו״ר הוועד</div>
+            <div class="desc">👑 הכתר הנוכחי - הוד מלכותי</div>
+        </div>
+
+        <!-- 1: Star -->
+        <div class="option">
+            <span class="num">1</span>
+            <div class="badge b-star"><i class="fas fa-star"></i></div>
+            <div class="avatar">דא</div>
+            <div class="name">דוד אנגל</div>
+            <div class="role">יו״ר הוועד</div>
+            <div class="desc">⭐ כוכב - פשוט ומובן</div>
+        </div>
+
+        <!-- 2: Medal -->
+        <div class="option">
+            <span class="num">2</span>
+            <div class="badge b-medal"><i class="fas fa-medal"></i></div>
+            <div class="avatar">דא</div>
+            <div class="name">דוד אנגל</div>
+            <div class="role">יו״ר הוועד</div>
+            <div class="desc">🏅 מדליה - הוקרה והערכה</div>
+        </div>
+
+        <!-- 3: Trophy -->
+        <div class="option">
+            <span class="num">3</span>
+            <div class="badge b-trophy"><i class="fas fa-trophy"></i></div>
+            <div class="avatar">דא</div>
+            <div class="name">דוד אנגל</div>
+            <div class="role">יו״ר הוועד</div>
+            <div class="desc">🏆 גביע - הישג ומצוינות</div>
+        </div>
+
+        <!-- 4: Shield -->
+        <div class="option">
+            <span class="num">4</span>
+            <div class="badge b-shield"><i class="fas fa-shield-alt"></i></div>
+            <div class="avatar">דא</div>
+            <div class="name">דוד אנגל</div>
+            <div class="role">יו״ר הוועד</div>
+            <div class="desc">🛡️ מגן - אחריות ושמירה</div>
+        </div>
+
+        <!-- 5: Handshake -->
+        <div class="option">
+            <span class="num">5</span>
+            <div class="badge b-handshake"><i class="fas fa-handshake"></i></div>
+            <div class="avatar">דא</div>
+            <div class="name">דוד אנגל</div>
+            <div class="role">יו״ר הוועד</div>
+            <div class="desc">🤝 לחיצת יד - שותפות וקהילה</div>
+        </div>
+
+        <!-- 6: Tie -->
+        <div class="option">
+            <span class="num">6</span>
+            <div class="badge b-tie"><i class="fas fa-user-tie"></i></div>
+            <div class="avatar">דא</div>
+            <div class="name">דוד אנגל</div>
+            <div class="role">יו״ר הוועד</div>
+            <div class="desc">👔 איש עסקים - מקצועי ורציני</div>
+        </div>
+
+        <!-- 7: Compass -->
+        <div class="option">
+            <span class="num">7</span>
+            <div class="badge b-compass"><i class="fas fa-compass"></i></div>
+            <div class="avatar">דא</div>
+            <div class="name">דוד אנגל</div>
+            <div class="role">יו״ר הוועד</div>
+            <div class="desc">🧭 מצפן - הכוונה ומנהיגות</div>
+        </div>
+
+        <!-- 8: Quote -->
+        <div class="option">
+            <span class="num">8</span>
+            <div class="badge b-quote"><i class="fas fa-anchor"></i></div>
+            <div class="avatar">דא</div>
+            <div class="name">דוד אנגל</div>
+            <div class="role">יו״ר הוועד</div>
+            <div class="desc">⚓ עוגן - יציבות ויסודיות</div>
+        </div>
+
+        <!-- 9: Text "יו"ר" -->
+        <div class="option">
+            <span class="num">9</span>
+            <div class="badge b-text">יו"ר</div>
+            <div class="avatar">דא</div>
+            <div class="name">דוד אנגל</div>
+            <div class="role">יו״ר הוועד</div>
+            <div class="desc">📝 טקסט "יו״ר" - ברור ומדויק</div>
+        </div>
+
+    </div>
+
+    <div style="text-align: center; padding: 40px; color: #666;">
+        <h2 style="color: #0066cc; margin-bottom: 16px; font-size: 24px;">💡 ההמלצות שלי:</h2>
+        <p style="font-size: 17px; line-height: 1.7; max-width: 700px; margin: 0 auto;">
+            תגיד לי <strong>מספר</strong> שאתה אוהב.<br>
+            אפשר גם לערבב - לדוגמה: "אופציה 5 בכחול במקום ירוק"
+        </p>
+        <div style="margin-top: 30px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            <div style="background: #dcfce7; padding: 16px 20px; border-radius: 12px; max-width: 240px;">
+                <strong style="color: #15803d;">🤝 הכי קהילתי:</strong>
+                <p style="color: #166534; margin-top: 6px; font-size: 14px;">אופציה <strong>5</strong> (לחיצת יד)</p>
+            </div>
+            <div style="background: #fef3c7; padding: 16px 20px; border-radius: 12px; max-width: 240px;">
+                <strong style="color: #92400e;">⭐ הכי פשוט ויפה:</strong>
+                <p style="color: #78350f; margin-top: 6px; font-size: 14px;">אופציה <strong>1</strong> (כוכב)</p>
+            </div>
+            <div style="background: #dbeafe; padding: 16px 20px; border-radius: 12px; max-width: 240px;">
+                <strong style="color: #1e40af;">📝 הכי ברור:</strong>
+                <p style="color: #1e3a8a; margin-top: 6px; font-size: 14px;">אופציה <strong>9</strong> ("יו"ר")</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

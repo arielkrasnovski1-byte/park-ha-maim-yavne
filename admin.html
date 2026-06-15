@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פאנל ניהול - פארק המים יבנה</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/favicon.png?v=20260616t">
+    <link rel="apple-touch-icon" href="images/favicon.png?v=20260616t">
+    <meta name="theme-color" content="#0066cc">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="admin.css?v=20260615">
+</head>
+<body>
+
+    <!-- ============================================
+         Login Screen
+         ============================================ -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <div class="login-logo">
+                <img src="images/logo.png" alt="פארק המים יבנה">
+            </div>
+            <h1>פאנל ניהול</h1>
+            <p class="login-sub">פארק המים יבנה</p>
+
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> דוא״ל</label>
+                    <input type="email" id="email" required autocomplete="email" placeholder="admin@parkhamaim.co.il">
+                </div>
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> סיסמה</label>
+                    <input type="password" id="password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i>
+                    התחברות
+                </button>
+                <div id="loginError" class="login-error" style="display:none;"></div>
+            </form>
+
+            <div class="login-info">
+                <i class="fas fa-info-circle"></i>
+                גישה למורשים בלבד | מערכת מאובטחת
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         Admin Dashboard
+         ============================================ -->
+    <div class="admin-app" id="adminApp" style="display:none;">
+
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <img src="images/logo.png" alt="לוגו" class="sidebar-logo">
+                <div>
+                    <h2>פארק המים</h2>
+                    <p>פאנל ניהול</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>סקירה</span>
+                </a>
+                <a class="nav-item" data-section="messages">
+                    <i class="fas fa-envelope"></i>
+                    <span>הודעות נכנסות</span>
+                    <span class="nav-badge" id="messagesBadge" style="display:none;">0</span>
+                </a>
+                <a class="nav-item" data-section="news">
+                    <i class="fas fa-bullhorn"></i>
+                    <span>לוח מודעות</span>
+                </a>
+                <a class="nav-item" data-section="hours">
+                    <i class="fas fa-clock"></i>
+                    <span>שעות פעילות</span>
+                </a>
+                <a class="nav-item" data-section="classes">
+                    <i class="fas fa-dumbbell"></i>
+                    <span>חוגים</span>
+                </a>
+                <a class="nav-item" data-section="board">
+                    <i class="fas fa-users"></i>
+                    <span>חברי ועד</span>
+                </a>
+                <a class="nav-item" data-section="elections">
+                    <i class="fas fa-vote-yea"></i>
+                    <span>תוצאות בחירות</span>
+                </a>
+                <a class="nav-item" data-section="gallery">
+                    <i class="fas fa-images"></i>
+                    <span>גלריית תמונות</span>
+                </a>
+                <a class="nav-item" data-section="contact">
+                    <i class="fas fa-address-card"></i>
+                    <span>פרטי קשר</span>
+                </a>
+                <a class="nav-item" data-section="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>הגדרות</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar"><i class="fas fa-user"></i></div>
+                    <div>
+                        <div class="user-name" id="userName">מנהל</div>
+                        <div class="user-role">Administrator</div>
+                    </div>
+                </div>
+                <button class="btn-logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    התנתקות
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+
+            <!-- Top Bar -->
+            <header class="admin-topbar">
+                <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+                <div class="topbar-title" id="topbarTitle">
+                    <i class="fas fa-home"></i>
+                    <h1>סקירה כללית</h1>
+                </div>
+                <div class="topbar-actions">
+                    <a href="index.html" target="_blank" class="btn-secondary">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span>צפה באתר</span>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Sections -->
+            <div class="content-area">
+
+                <!-- ================= DASHBOARD ================= -->
+                <section class="content-section active" id="section-dashboard">
+                    <div class="welcome-banner">
+                        <div>
+                            <h2>שלום, ברוך הבא! 👋</h2>
+                            <p>כאן תוכל לנהל את כל תוכן האתר של פארק המים יבנה</p>
+                        </div>
+                        <div class="welcome-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card" data-color="blue">
+                            <div class="stat-icon"><i class="fas fa-bullhorn"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="statNews">—</div>
+                                <div class="stat-label">הודעות פעילות</div>
+                            </div>
+                        </div>
+                        <div class="stat-card" data-color="green">
+                            <div class="stat-icon"><i class="fas fa-dumbbell"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="statClasses">55</div>
+                                <div class="stat-label">חוגים פעילים</div>
+                            </div>
+                        </div>
+                        <div class="stat-card" data-color="purple">
+                            <div class="stat-icon"><i class="fas fa-users"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-value">11</div>
+                                <div class="stat-label">חברי ועד</div>
+                            </div>
+                        </div>
+                        <div class="stat-card" data-color="orange">
+                            <div class="stat-icon"><i class="fas fa-images"></i></div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="statImages">—</div>
+                                <div class="stat-label">תמונות בגלריה</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions-section">
+                        <h3><i class="fas fa-bolt"></i> פעולות מהירות</h3>
+                        <div class="quick-actions-grid">
+                            <button class="quick-action" data-action="news">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>הוסף הודעה חדשה</span>
+                            </button>
+                            <button class="quick-action" data-action="hours">
+                                <i class="fas fa-clock"></i>
+                                <span>עדכן שעות פתיחה</span>
+                            </button>
+                            <button class="quick-action" data-action="classes">
+                                <i class="fas fa-edit"></i>
+                                <span>ערוך לוח חוגים</span>
+                            </button>
+                            <button class="quick-action" data-action="gallery">
+                                <i class="fas fa-upload"></i>
+                                <span>העלה תמונות</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>טיפ:</strong> כל שינוי נשמר אוטומטית לענן Firebase ויופיע באתר תוך שניות.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= MESSAGES (Inbox) ================= -->
+                <section class="content-section" id="section-messages">
+                    <div class="section-header-admin">
+                        <h2><i class="fas fa-envelope"></i> הודעות נכנסות</h2>
+                        <div class="messages-stats" id="messagesStats"></div>
+                    </div>
+
+                    <!-- Inbox Sub-Tabs -->
+                    <div class="inbox-tabs">
+                        <button class="inbox-tab active" data-inbox-tab="messages">
+                            <i class="fas fa-inbox"></i> הודעות
+                        </button>
+                        <button class="inbox-tab" data-inbox-tab="replies">
+                            <i class="fas fa-bolt"></i> תשובות שמורות
+                            <span class="reply-count" id="replyCount">0</span>
+                        </button>
+                    </div>
+
+                    <!-- Tab: Messages -->
+                    <div class="inbox-tab-content active" id="inbox-content-messages">
+                        <div class="messages-filter-bar" id="messagesFilterBar"></div>
+                        <div class="messages-list" id="messagesList">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <p>טוען הודעות...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Quick Replies -->
+                    <div class="inbox-tab-content" id="inbox-content-replies">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <p class="section-desc" style="margin: 0;">
+                                תבניות תשובות מוכנות. <strong>טיפ:</strong> <code>[שם]</code> = שם הלקוח, <code>[נושא]</code> = נושא הפנייה.
+                            </p>
+                            <button class="btn-primary" id="addReplyBtn">
+                                <i class="fas fa-plus"></i>
+                                הוסף תשובה
+                            </button>
+                        </div>
+                        <div class="quick-replies-list" id="quickRepliesList"></div>
+                    </div>
+                </section>
+
+                <!-- ================= NEWS ================= -->
+                <section class="content-section" id="section-news">
+                    <div class="section-header-admin">
+                        <h2><i class="fas fa-bullhorn"></i> לוח מודעות</h2>
+                        <button class="btn-primary" id="addNewsBtn">
+                            <i class="fas fa-plus"></i>
+                            הוספת הודעה
+                        </button>
+                    </div>
+                    <div class="news-list" id="newsList">
+                        <div class="empty-state">
+                            <i class="fas fa-newspaper"></i>
+                            <p>טוען הודעות...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= HOURS ================= -->
+                <section class="content-section" id="section-hours">
+                    <div class="section-header-admin">
+                        <h2><i class="fas fa-clock"></i> שעות פעילות - קיץ 2026</h2>
+                        <button class="btn-primary" id="saveHoursBtn">
+                            <i class="fas fa-save"></i>
+                            שמירת שינויים
+                        </button>
+                    </div>
+
+                    <div class="card-form">
+                        <h3>תקופה</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>תאריך התחלה</label>
+                                <input type="text" id="hoursStartDate" value="29.5.2026">
+                            </div>
+                            <div class="form-group">
+                                <label>תאריך סיום</label>
+                                <input type="text" id="hoursEndDate" value="18.6.2026">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-form">
+                        <h3>שעות פעילות לפי מתקן</h3>
+                        <div id="hoursEditor"></div>
+                    </div>
+                </section>
+
+                <!-- ================= CLASSES ================= -->
+                <section class="content-section" id="section-classes">
+                    <div class="section-header-admin">
+                        <h2><i class="fas fa-dumbbell"></i> ניהול חוגים</h2>
+                        <button class="btn-primary" id="addClassBtn">
+                            <i class="fas fa-plus"></i>
+                            הוסף חוג
+                        </button>
+                    </div>
+
+                    <div class="day-tabs">
+                        <button class="day-tab active" data-day="0">ראשון</button>
+                        <button class="day-tab" data-day="1">שני</button>
+                        <button class="day-tab" data-day="2">שלישי</button>
+                        <button class="day-tab" data-day="3">רביעי</button>
+                        <button class="day-tab" data-day="4">חמישי</button>
+                        <button class="day-tab" data-day="5">שישי</button>
+                        <button class="day-tab" data-day="6">שבת</button>
+                    </div>
+
+                    <div class="classes-list" id="classesList"></div>
+                </section>
+
+                <!-- ================= BOARD ================= -->
+                <section class="content-section" id="section-board">
+                    <!-- CEO Display Card (Management) -->
+                    <div class="ceo-admin-card" id="ceoDisplayCard">
+                        <div class="ceo-display-content">
+                            <div class="ceo-display-avatar" id="ceoDisplayAvatar">לק</div>
+                            <div class="ceo-display-info">
+                                <span class="ceo-display-tag" id="ceoDisplayTitle">מנכ״לית הפארק</span>
+                                <h3 id="ceoDisplayName">לימור קרסנובסקי</h3>
+                                <p id="ceoDisplayDescription">ניהול שוטף של כל פעילות הפארק - מתקנים, חוגים, עובדים, אירועים וקשר עם החברים</p>
+                            </div>
+                            <button class="ceo-edit-btn" id="editCeoBtn" title="ערוך פרטי מנכ״לית">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="section-header-admin">
+                        <h2><i class="fas fa-users"></i> חברי ועד העמותה</h2>
+                        <button class="btn-primary" id="addBoardBtn">
+                            <i class="fas fa-plus"></i>
+                            הוסף חבר ועד
+                        </button>
+                    </div>
+
+                    <p class="section-desc">נכון לתאריך: <input type="text" id="boardDate" value="01.10.2025" class="inline-input"></p>
+
+                    <div class="board-list" id="boardList"></div>
+
+                    <div class="section-header-admin" style="margin-top: 40px;">
+                        <h2><i class="fas fa-balance-scale"></i> ועדות העמותה</h2>
+                        <button class="btn-primary" id="addCommitteeBtn">
+                            <i class="fas fa-plus"></i>
+                            הוסף ועדה
+                        </button>
+                    </div>
+                    <div class="board-list" id="committeesList"></div>
+                </section>
+
+                <!-- ================= ELECTIONS ================= -->
+                <section class="content-section" id="section-elections">
+                    <div class="section-header-admin">
+                        <h2><i class="fas fa-vote-yea"></i> תוצאות בחירות</h2>
+                        <button class="btn-primary" id="addElectionBtn">
+                            <i class="fas fa-plus"></i>
+                            בחירות חדשות
+                        </button>
+                    </div>
+                    <div class="elections-list" id="electionsList"></div>
+                </section>
+
+                <!-- ================= GALLERY ================= -->
+                <section class="content-section" id="section-gallery">
+                    <div class="section-header-admin">
+                        <h2><i class="fas fa-images"></i> גלריית תמונות</h2>
+                        <label for="uploadInput" class="btn-primary">
+                            <i class="fas fa-upload"></i>
+                            העלה תמונות
+                        </label>
+                        <input type="file" id="uploadInput" multiple accept="image/*" style="display:none;">
+                    </div>
+
+                    <div class="upload-zone" id="uploadZone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>גרור תמונות לכאן או לחץ "העלה תמונות"</h3>
+                        <p>תמונות יעלו אוטומטית לענן ויוצגו באתר</p>
+                    </div>
+
+                    <div class="gallery-filter-bar" id="galleryFilterBar"></div>
+
+                    <div class="gallery-admin-grid" id="galleryAdminGrid"></div>
+                </section>
+
+                <!-- ================= CONTACT ================= -->
+                <section class="content-section" id="section-contact">
+                    <div class="section-header-admin">
+                        <h2><i class="fas fa-address-card"></i> פרטי קשר</h2>
+                        <button class="btn-primary" id="saveContactBtn">
+                            <i class="fas fa-save"></i>
+                            שמירה
+                        </button>
+                    </div>
+
+                    <div class="card-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-phone"></i> טלפון ראשי</label>
+                                <input type="text" id="contactPhone" value="08-9431524">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-phone"></i> טלפון נוסף</label>
+                                <input type="text" id="contactPhone2" value="08-9431525">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-fax"></i> פקס</label>
+                                <input type="text" id="contactFax" value="08-9334290">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-map-marker-alt"></i> כתובת</label>
+                                <input type="text" id="contactAddress" value="שדרות דואני, יבנה">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-envelope"></i> מייל מזכירות</label>
+                                <input type="email" id="contactEmail1" value="mazkirot@parkhamaim.co.il">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-envelope"></i> מייל הנהלה</label>
+                                <input type="email" id="contactEmail2" value="hanhala@parkhamaim.co.il">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-form">
+                        <h3>קישורים לרשתות חברתיות</h3>
+                        <div class="form-group">
+                            <label><i class="fab fa-facebook"></i> Facebook</label>
+                            <input type="url" id="socialFacebook" placeholder="https://facebook.com/...">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fab fa-instagram"></i> Instagram</label>
+                            <input type="url" id="socialInstagram" placeholder="https://instagram.com/...">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fab fa-youtube"></i> YouTube</label>
+                            <input type="url" id="socialYoutube" placeholder="https://youtube.com/...">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= SETTINGS ================= -->
+                <section class="content-section" id="section-settings">
+                    <div class="section-header-admin">
+                        <h2><i class="fas fa-cog"></i> הגדרות</h2>
+                    </div>
+
+                    <div class="card-form">
+                        <h3>מידע על המערכת</h3>
+                        <div class="info-row">
+                            <span>גרסה:</span>
+                            <strong>1.0.0</strong>
+                        </div>
+                        <div class="info-row">
+                            <span>סטטוס Firebase:</span>
+                            <strong class="status-connected" id="firebaseStatus">לא מחובר</strong>
+                        </div>
+                        <div class="info-row">
+                            <span>סנכרון אחרון:</span>
+                            <strong id="lastSync">—</strong>
+                        </div>
+                    </div>
+
+                    <div class="card-form">
+                        <h3>החלפת סיסמה</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>סיסמה נוכחית</label>
+                                <input type="password" id="currentPass">
+                            </div>
+                            <div class="form-group">
+                                <label>סיסמה חדשה</label>
+                                <input type="password" id="newPass">
+                            </div>
+                        </div>
+                        <button class="btn-primary" id="changePassBtn">
+                            <i class="fas fa-key"></i>
+                            שינוי סיסמה
+                        </button>
+                    </div>
+
+                    <div class="card-form">
+                        <h3>📧 התראות מייל אוטומטיות</h3>
+                        <p style="color: var(--admin-text-muted); font-size: 14px; margin-bottom: 14px;">
+                            כל הודעה חדשה דרך טופס "צור קשר" תישלח אוטומטית למיילים המוגדרים.
+                        </p>
+                        <div class="form-group">
+                            <label><i class="fas fa-envelope"></i> מייל/ים לקבלת התראות</label>
+                            <input type="text" id="notificationEmail" placeholder="mazkirot@parkhamaim.co.il, hanhala@parkhamaim.co.il">
+                            <div style="font-size: 12px; color: var(--admin-text-muted); margin-top: 6px;">
+                                💡 לכמה נמענים — הפרידו בפסיק. דוגמה: <code>mazkirot@parkhamaim.co.il, hanhala@parkhamaim.co.il</code>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="notificationEnabled" checked>
+                                <span>הפעל שליחה אוטומטית של התראות</span>
+                            </label>
+                        </div>
+                        <button class="btn-primary" id="saveNotifBtn">
+                            <i class="fas fa-save"></i>
+                            שמור הגדרות
+                        </button>
+                        <p style="color: var(--admin-text-muted); font-size: 12px; margin-top: 14px; padding: 10px; background: #fef3c7; border-radius: 8px; border: 1px solid #fbbf24;">
+                            ⚠️ <strong>הגדרה חד-פעמית נדרשת:</strong> בקונסול Firebase יש להתקין את ה-Extension "Trigger Email" — ראה הוראות בתחתית הדף.
+                        </p>
+                    </div>
+
+                    <div class="card-form">
+                        <h3>🔧 כלי ניהול</h3>
+                        <p style="color: var(--admin-text-muted); font-size: 14px; margin-bottom: 14px;">
+                            כלים מתקדמים לניהול תוכן המערכת
+                        </p>
+                        <button class="btn-primary" id="forceMigrationBtn">
+                            <i class="fas fa-rocket"></i>
+                            טען / החזר תוכן ראשוני
+                        </button>
+                        <p style="color: var(--admin-text-muted); font-size: 12px; margin-top: 10px;">
+                            💡 לחץ כאן אם הבאנר הצהוב לא הופיע, או אם רצית לטעון מחדש את התוכן הקבוע מהאתר
+                        </p>
+                    </div>
+
+                    <div class="card-form danger-zone">
+                        <h3>⚠️ אזור מסוכן</h3>
+                        <p>פעולות אלו אינן הפיכות</p>
+                        <button class="btn-danger" id="exportDataBtn">
+                            <i class="fas fa-download"></i>
+                            ייצוא כל הנתונים (גיבוי)
+                        </button>
+                        <button class="btn-danger" id="resetAllBtn" style="margin-top: 10px;">
+                            <i class="fas fa-trash"></i>
+                            מחק את כל התוכן (התחל מחדש)
+                        </button>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ============================================
+         Toast Notifications
+         ============================================ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ============================================
+         Modal Container
+         ============================================ -->
+    <div class="modal-overlay" id="modalOverlay" style="display:none;">
+        <div class="modal" id="modal"></div>
+    </div>
+
+    <!-- Firebase v9 SDK + App Logic -->
+    <script type="module" src="admin.js?v=20260615"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+
+# Build/temp outputs (no need to commit)
+pdf-output/
+*.pdf
+
+# Unsorted user uploads (not part of the site)
+new images/
+
+# Backups
+images/favicon-original-backup.png
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log

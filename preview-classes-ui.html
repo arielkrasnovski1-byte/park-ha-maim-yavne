@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>תצוגה מקדימה - ממשקי חוגים</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Poppins:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Assistant', sans-serif;
+            background: #f5f5f5;
+            padding: 40px 20px;
+            direction: rtl;
+            color: #0f172a;
+        }
+        h1 {
+            text-align: center;
+            color: #0066cc;
+            font-size: 36px;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+        .sub {
+            text-align: center;
+            color: #555;
+            margin-bottom: 50px;
+            font-size: 17px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto 60px;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+        }
+        .option-header {
+            background: linear-gradient(135deg, #0066cc, #00b4d8);
+            color: white;
+            padding: 28px 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .option-header .num {
+            background: rgba(255,255,255,0.2);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 22px;
+        }
+        .option-header h2 {
+            font-size: 28px;
+            font-weight: 800;
+            flex: 1;
+            margin-right: 16px;
+        }
+        .recommend {
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .demo {
+            padding: 40px;
+        }
+
+        /* =====================================
+           Option 1: Tabs with cards
+           ===================================== */
+        .tabs-wrapper {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 20px;
+        }
+        .tabs-bar {
+            display: flex;
+            gap: 4px;
+            background: white;
+            padding: 6px;
+            border-radius: 100px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            overflow-x: auto;
+        }
+        .tab {
+            padding: 12px 22px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+            color: #475569;
+        }
+        .tab.active {
+            background: linear-gradient(135deg, #0066cc, #00b4d8);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+        .class-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .class-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            border-color: #0066cc;
+        }
+        .class-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, #0066cc, #00b4d8);
+        }
+        .class-time {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #b45309;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-family: 'Poppins', sans-serif;
+        }
+        .class-name {
+            font-size: 17px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+        .class-inst {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+        .class-inst i {
+            color: #94a3b8;
+            margin-left: 5px;
+        }
+        .class-price {
+            border-top: 1px dashed #e2e8f0;
+            padding-top: 10px;
+            font-weight: 700;
+            color: #0066cc;
+            font-size: 14px;
+        }
+        .class-price.free {
+            color: #16a34a;
+        }
+
+        /* =====================================
+           Option 2: Weekly Calendar Grid
+           ===================================== */
+        .calendar {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        .cal-header {
+            display: grid;
+            grid-template-columns: 70px repeat(7, 1fr);
+            background: linear-gradient(135deg, #0066cc, #00b4d8);
+            color: white;
+        }
+        .cal-day {
+            padding: 14px 8px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 13px;
+            border-left: 1px solid rgba(255,255,255,0.15);
+        }
+        .cal-day:first-child {
+            background: rgba(0,0,0,0.1);
+        }
+        .cal-row {
+            display: grid;
+            grid-template-columns: 70px repeat(7, 1fr);
+            border-top: 1px solid #f1f5f9;
+        }
+        .cal-time {
+            background: #f8fafc;
+            padding: 12px 8px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+            font-family: 'Poppins', sans-serif;
+            border-left: 1px solid #e2e8f0;
+        }
+        .cal-cell {
+            padding: 6px;
+            border-left: 1px solid #f1f5f9;
+            min-height: 50px;
+            position: relative;
+        }
+        .cal-class {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #1e40af;
+            padding: 6px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            cursor: pointer;
+            border-right: 3px solid #0066cc;
+            line-height: 1.3;
+        }
+        .cal-class.yellow {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #92400e;
+            border-color: #f59e0b;
+        }
+        .cal-class.green {
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            color: #166534;
+            border-color: #16a34a;
+        }
+
+        /* =====================================
+           Option 3: Filter Grid View
+           ===================================== */
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .filter-chip {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #475569;
+            transition: all 0.3s;
+        }
+        .filter-chip.active {
+            background: #0066cc;
+            color: white;
+            border-color: #0066cc;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+        .search-box {
+            background: white;
+            padding: 12px 18px;
+            border-radius: 100px;
+            border: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .search-box i {
+            color: #94a3b8;
+        }
+        .search-box input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-family: inherit;
+            font-size: 14px;
+            color: #0f172a;
+        }
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 14px;
+        }
+        .mini-card {
+            background: white;
+            padding: 16px;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .mini-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        .mini-tag {
+            display: inline-block;
+            padding: 2px 10px;
+            background: #f0f9ff;
+            color: #0284c7;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 100px;
+            margin-bottom: 8px;
+        }
+        .mini-name {
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 4px;
+            font-size: 15px;
+        }
+        .mini-meta {
+            font-size: 12px;
+            color: #64748b;
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        /* =====================================
+           Option 4: Modern Timeline
+           ===================================== */
+        .timeline {
+            background: linear-gradient(180deg, #f8fafc 0%, white 100%);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        .day-pills {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+        .day-pill {
+            padding: 10px 18px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            text-align: center;
+            min-width: 100px;
+            color: #475569;
+        }
+        .day-pill.active {
+            background: linear-gradient(135deg, #0066cc, #00b4d8);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+        .day-pill .pill-date {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-bottom: 2px;
+        }
+        .day-pill .pill-day {
+            font-size: 15px;
+            font-weight: 800;
+        }
+        .timeline-items {
+            position: relative;
+            padding-right: 20px;
+        }
+        .timeline-items::before {
+            content: '';
+            position: absolute;
+            right: 7px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #0066cc, #00b4d8);
+        }
+        .tl-item {
+            position: relative;
+            margin-bottom: 16px;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        .tl-item:hover {
+            transform: translateX(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            border-color: #0066cc;
+        }
+        .tl-item::before {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: 22px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border: 3px solid #0066cc;
+            border-radius: 50%;
+        }
+        .tl-time {
+            font-family: 'Poppins', sans-serif;
+            color: #0066cc;
+            font-weight: 800;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .tl-name {
+            font-size: 16px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+        .tl-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #64748b;
+        }
+        .tl-meta strong {
+            color: #475569;
+        }
+
+        /* Recommendation */
+        .recommend-box {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 14px 20px;
+            border-radius: 12px;
+            margin-top: 24px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎨 בחר ממשק מודרני לחוגים</h1>
+    <p class="sub">4 אפשרויות שונות - כולן נוחות ומודרניות</p>
+
+    <!-- ========== OPTION 1: TABS + CARDS ========== -->
+    <div class="container">
+        <div class="option-header">
+            <div class="num">1</div>
+            <h2>🗂️ טאבים + כרטיסים</h2>
+            <span class="recommend">🏆 מומלץ למובייל</span>
+        </div>
+        <div class="demo">
+            <div class="tabs-wrapper">
+                <div class="tabs-bar">
+                    <div class="tab active">ראשון (8)</div>
+                    <div class="tab">שני (12)</div>
+                    <div class="tab">שלישי (10)</div>
+                    <div class="tab">רביעי (9)</div>
+                    <div class="tab">חמישי (8)</div>
+                    <div class="tab">שישי (5)</div>
+                    <div class="tab">שבת (3)</div>
+                </div>
+                <div class="cards-grid">
+                    <div class="class-card">
+                        <span class="class-time">07:45-08:30</span>
+                        <div class="class-name">יציבה ומתיחות</div>
+                        <div class="class-inst"><i class="fas fa-user"></i>חיה</div>
+                        <div class="class-price">למנויים בלבד</div>
+                    </div>
+                    <div class="class-card">
+                        <span class="class-time">18:00-19:00</span>
+                        <div class="class-name">זומבה</div>
+                        <div class="class-inst"><i class="fas fa-user"></i>ליאורה</div>
+                        <div class="class-price">220 ₪</div>
+                    </div>
+                    <div class="class-card">
+                        <span class="class-time">19:00-23:00</span>
+                        <div class="class-name">ריקודי עם</div>
+                        <div class="class-inst"><i class="fas fa-user"></i>איציק בן דהן</div>
+                        <div class="class-price">25/35 ₪</div>
+                    </div>
+                    <div class="class-card">
+                        <span class="class-time">20:00-21:00</span>
+                        <div class="class-name">פילאטיס</div>
+                        <div class="class-inst"><i class="fas fa-user"></i>דליה</div>
+                        <div class="class-price">220 ₪</div>
+                    </div>
+                </div>
+            </div>
+            <div class="recommend-box">
+                ✨ <strong>יתרון:</strong> מובייל מעולה, מודרני, כל חוג ככרטיס נפרד עם hover אינטראקטיבי
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== OPTION 2: CALENDAR GRID ========== -->
+    <div class="container">
+        <div class="option-header">
+            <div class="num">2</div>
+            <h2>📅 לוח שנה שבועי</h2>
+            <span class="recommend">📊 הכי מקצועי</span>
+        </div>
+        <div class="demo">
+            <div class="calendar">
+                <div class="cal-header">
+                    <div class="cal-day">שעה</div>
+                    <div class="cal-day">ראשון</div>
+                    <div class="cal-day">שני</div>
+                    <div class="cal-day">שלישי</div>
+                    <div class="cal-day">רביעי</div>
+                    <div class="cal-day">חמישי</div>
+                    <div class="cal-day">שישי</div>
+                    <div class="cal-day">שבת</div>
+                </div>
+                <div class="cal-row">
+                    <div class="cal-time">07:00</div>
+                    <div class="cal-cell"></div>
+                    <div class="cal-cell"><div class="cal-class">יוגה - מילנה</div></div>
+                    <div class="cal-cell"><div class="cal-class">יוגה - חני</div></div>
+                    <div class="cal-cell"></div>
+                    <div class="cal-cell"><div class="cal-class">יוגה - חני</div></div>
+                    <div class="cal-cell"></div>
+                    <div class="cal-cell"></div>
+                </div>
+                <div class="cal-row">
+                    <div class="cal-time">07:45</div>
+                    <div class="cal-cell"><div class="cal-class yellow">יציבה</div></div>
+                    <div class="cal-cell"><div class="cal-class">התעמלות מים</div></div>
+                    <div class="cal-cell"><div class="cal-class">התעמלות מים</div></div>
+                    <div class="cal-cell"></div>
+                    <div class="cal-cell"><div class="cal-class">התעמלות מים</div></div>
+                    <div class="cal-cell"><div class="cal-class">יוגה - יעל</div></div>
+                    <div class="cal-cell"></div>
+                </div>
+                <div class="cal-row">
+                    <div class="cal-time">18:00</div>
+                    <div class="cal-cell"><div class="cal-class">זומבה</div></div>
+                    <div class="cal-cell"><div class="cal-class">פילאטיס</div></div>
+                    <div class="cal-cell"><div class="cal-class">עיצוב</div></div>
+                    <div class="cal-cell"><div class="cal-class">זומבה</div></div>
+                    <div class="cal-cell"><div class="cal-class">דיאט דאנס</div></div>
+                    <div class="cal-cell"></div>
+                    <div class="cal-cell"></div>
+                </div>
+                <div class="cal-row">
+                    <div class="cal-time">19:00</div>
+                    <div class="cal-cell"><div class="cal-class yellow">אירובי</div></div>
+                    <div class="cal-cell"><div class="cal-class">בריאותית</div></div>
+                    <div class="cal-cell"><div class="cal-class green">ריקודי עם</div></div>
+                    <div class="cal-cell"><div class="cal-class">פילאטיס</div></div>
+                    <div class="cal-cell"><div class="cal-class">בריאותית</div></div>
+                    <div class="cal-cell"></div>
+                    <div class="cal-cell"></div>
+                </div>
+                <div class="cal-row">
+                    <div class="cal-time">20:00</div>
+                    <div class="cal-cell"><div class="cal-class">פילאטיס</div></div>
+                    <div class="cal-cell"><div class="cal-class">גברים</div></div>
+                    <div class="cal-cell"></div>
+                    <div class="cal-cell"><div class="cal-class">פילאטיס</div></div>
+                    <div class="cal-cell"></div>
+                    <div class="cal-cell"></div>
+                    <div class="cal-cell"></div>
+                </div>
+            </div>
+            <div class="recommend-box">
+                ✨ <strong>יתרון:</strong> תצוגת לוח שנה מקצועית - רואים את כל השבוע בבת אחת. דמוי Google Calendar
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== OPTION 3: FILTER GRID ========== -->
+    <div class="container">
+        <div class="option-header">
+            <div class="num">3</div>
+            <h2>🔍 חיפוש ופילטרים</h2>
+            <span class="recommend">⚡ הכי גמיש</span>
+        </div>
+        <div class="demo">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="חפש חוג, מדריך או יום...">
+            </div>
+            <div class="filter-bar">
+                <div class="filter-chip active">הכל (55)</div>
+                <div class="filter-chip">💪 כושר</div>
+                <div class="filter-chip">🧘 יוגה (5)</div>
+                <div class="filter-chip">💧 מים (6)</div>
+                <div class="filter-chip">💃 ריקוד (7)</div>
+                <div class="filter-chip">🤸 פילאטיס (11)</div>
+                <div class="filter-chip">⭐ למנויים</div>
+                <div class="filter-chip">📅 היום</div>
+            </div>
+            <div class="grid-cards">
+                <div class="mini-card">
+                    <span class="mini-tag">💃 ריקוד</span>
+                    <div class="mini-name">זומבה</div>
+                    <div class="mini-meta">
+                        <span><i class="far fa-calendar"></i> א',ד'</span>
+                        <span><i class="far fa-clock"></i> 18:00</span>
+                    </div>
+                </div>
+                <div class="mini-card">
+                    <span class="mini-tag">🧘 יוגה</span>
+                    <div class="mini-name">יוגה בוקר</div>
+                    <div class="mini-meta">
+                        <span><i class="far fa-calendar"></i> ב'</span>
+                        <span><i class="far fa-clock"></i> 07:00</span>
+                    </div>
+                </div>
+                <div class="mini-card">
+                    <span class="mini-tag">💧 מים</span>
+                    <div class="mini-name">התעמלות מים</div>
+                    <div class="mini-meta">
+                        <span><i class="far fa-calendar"></i> ב'-ה'</span>
+                        <span><i class="far fa-clock"></i> 07:45</span>
+                    </div>
+                </div>
+                <div class="mini-card">
+                    <span class="mini-tag">🤸 פילאטיס</span>
+                    <div class="mini-name">פילאטיס ערב</div>
+                    <div class="mini-meta">
+                        <span><i class="far fa-calendar"></i> ב',ד'</span>
+                        <span><i class="far fa-clock"></i> 19:00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="recommend-box">
+                ✨ <strong>יתרון:</strong> חיפוש חכם + פילטרים לפי קטגוריה - מושלם אם יש הרבה חוגים. גם הכי "אפליקציה"
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== OPTION 4: TIMELINE ========== -->
+    <div class="container">
+        <div class="option-header">
+            <div class="num">4</div>
+            <h2>⏱️ ציר זמן מודרני</h2>
+            <span class="recommend">🌟 הכי אלגנטי</span>
+        </div>
+        <div class="demo">
+            <div class="timeline">
+                <div class="day-pills">
+                    <div class="day-pill active">
+                        <div class="pill-date">8 חוגים</div>
+                        <div class="pill-day">ראשון</div>
+                    </div>
+                    <div class="day-pill">
+                        <div class="pill-date">12 חוגים</div>
+                        <div class="pill-day">שני</div>
+                    </div>
+                    <div class="day-pill">
+                        <div class="pill-date">10 חוגים</div>
+                        <div class="pill-day">שלישי</div>
+                    </div>
+                    <div class="day-pill">
+                        <div class="pill-date">9 חוגים</div>
+                        <div class="pill-day">רביעי</div>
+                    </div>
+                    <div class="day-pill">
+                        <div class="pill-date">8 חוגים</div>
+                        <div class="pill-day">חמישי</div>
+                    </div>
+                    <div class="day-pill">
+                        <div class="pill-date">5 חוגים</div>
+                        <div class="pill-day">שישי</div>
+                    </div>
+                    <div class="day-pill">
+                        <div class="pill-date">3 חוגים</div>
+                        <div class="pill-day">שבת</div>
+                    </div>
+                </div>
+                <div class="timeline-items">
+                    <div class="tl-item">
+                        <div class="tl-time">07:45 - 08:30</div>
+                        <div class="tl-name">יציבה ומתיחות</div>
+                        <div class="tl-meta">
+                            <span><i class="fas fa-user"></i> <strong>חיה</strong></span>
+                            <span><i class="fas fa-tag"></i> למנויים בלבד</span>
+                        </div>
+                    </div>
+                    <div class="tl-item">
+                        <div class="tl-time">18:00 - 19:00</div>
+                        <div class="tl-name">זומבה</div>
+                        <div class="tl-meta">
+                            <span><i class="fas fa-user"></i> <strong>ליאורה</strong></span>
+                            <span><i class="fas fa-tag"></i> 220 ₪</span>
+                        </div>
+                    </div>
+                    <div class="tl-item">
+                        <div class="tl-time">18:00 - 19:00</div>
+                        <div class="tl-name">דיאט דאנס</div>
+                        <div class="tl-meta">
+                            <span><i class="fas fa-user"></i> <strong>רחל</strong></span>
+                            <span><i class="fas fa-tag"></i> 220 ₪</span>
+                        </div>
+                    </div>
+                    <div class="tl-item">
+                        <div class="tl-time">19:00 - 23:00</div>
+                        <div class="tl-name">ריקודי עם</div>
+                        <div class="tl-meta">
+                            <span><i class="fas fa-user"></i> <strong>איציק בן דהן</strong></span>
+                            <span><i class="fas fa-tag"></i> 25/35 ₪</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="recommend-box">
+                ✨ <strong>יתרון:</strong> זרימה ויזואלית של ציר זמן + כפתורי יום אלגנטיים. הכי "פרימיום"
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; padding: 40px; color: #666;">
+        <h2 style="color: #0066cc; margin-bottom: 16px; font-size: 28px;">🎯 איך לבחור?</h2>
+        <p style="font-size: 17px; line-height: 1.7; max-width: 700px; margin: 0 auto 30px;">
+            תגיד לי <strong>מספר</strong> שאתה הכי אוהב.<br>
+            אפשר גם לערבב - לדוגמה: "אופציה 1 אבל בלי הצבעים הצהובים"
+        </p>
+        <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+            <div style="background: #dbeafe; padding: 16px 24px; border-radius: 16px; max-width: 220px;">
+                <strong style="color: #1e40af; font-size: 16px;">📱 הכי נוח</strong>
+                <p style="color: #1e3a8a; margin-top: 8px; font-size: 14px;">אופציה <strong>1</strong> - טאבים + כרטיסים</p>
+            </div>
+            <div style="background: #dcfce7; padding: 16px 24px; border-radius: 16px; max-width: 220px;">
+                <strong style="color: #15803d; font-size: 16px;">📊 הכי מקצועי</strong>
+                <p style="color: #166534; margin-top: 8px; font-size: 14px;">אופציה <strong>2</strong> - לוח שנה</p>
+            </div>
+            <div style="background: #fef3c7; padding: 16px 24px; border-radius: 16px; max-width: 220px;">
+                <strong style="color: #92400e; font-size: 16px;">⚡ הכי גמיש</strong>
+                <p style="color: #78350f; margin-top: 8px; font-size: 14px;">אופציה <strong>3</strong> - חיפוש ופילטרים</p>
+            </div>
+            <div style="background: #ede9fe; padding: 16px 24px; border-radius: 16px; max-width: 220px;">
+                <strong style="color: #6d28d9; font-size: 16px;">🌟 הכי אלגנטי</strong>
+                <p style="color: #5b21b6; margin-top: 8px; font-size: 14px;">אופציה <strong>4</strong> - ציר זמן</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

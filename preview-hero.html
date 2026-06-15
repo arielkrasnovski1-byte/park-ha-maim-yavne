@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>תצוגה מקדימה - רמות כהות Hero</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Assistant', sans-serif;
+            background: #f5f5f5;
+            padding: 30px 20px;
+        }
+        .page-title {
+            text-align: center;
+            color: #0066cc;
+            font-size: 32px;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+        .page-sub {
+            text-align: center;
+            color: #555;
+            margin-bottom: 40px;
+            font-size: 17px;
+        }
+        .preview-card {
+            max-width: 1100px;
+            margin: 0 auto 40px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        .preview-label {
+            background: #0066cc;
+            color: white;
+            padding: 18px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .preview-label .num {
+            background: rgba(255,255,255,0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+        }
+        .preview-label h3 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .preview-label .level {
+            background: rgba(0,0,0,0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-family: monospace;
+        }
+        .hero-preview {
+            height: 380px;
+            position: relative;
+            overflow: hidden;
+            background-image: url('images/new/aerial-park-wide.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 60px;
+            color: white;
+        }
+        .hero-title {
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1.05;
+            margin-bottom: 12px;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .hero-title span {
+            background: linear-gradient(135deg, #fde047 0%, #fb923c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-subtitle {
+            font-size: 17px;
+            max-width: 580px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+
+        /* Different overlay levels */
+        .level-1::after {
+            content: ''; position: absolute; inset: 0; z-index: 1;
+            background: linear-gradient(135deg, rgba(0,51,102,0.85) 0%, rgba(0,102,204,0.5) 50%, rgba(0,180,216,0.6) 100%);
+        }
+        .level-2::after {
+            content: ''; position: absolute; inset: 0; z-index: 1;
+            background: linear-gradient(135deg, rgba(0,51,102,0.6) 0%, rgba(0,102,204,0.35) 50%, rgba(0,180,216,0.4) 100%);
+        }
+        .level-3::after {
+            content: ''; position: absolute; inset: 0; z-index: 1;
+            background: linear-gradient(135deg, rgba(0,51,102,0.4) 0%, rgba(0,102,204,0.2) 50%, rgba(0,180,216,0.25) 100%);
+        }
+        .level-4::after {
+            content: ''; position: absolute; inset: 0; z-index: 1;
+            background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 100%);
+        }
+        .level-5::after {
+            content: ''; position: absolute; inset: 0; z-index: 1;
+            background: linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.3) 100%);
+        }
+        .level-6::after {
+            content: ''; position: absolute; inset: 0; z-index: 1;
+            background: none;
+        }
+
+        .preview-info {
+            padding: 16px 24px;
+            background: #f8fafc;
+            color: #555;
+            font-size: 14px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .recommendation {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="page-title">🎨 בחר רמת כהות ל-Hero</h1>
+    <p class="page-sub">6 אפשרויות שונות - מהכי כהה (הנוכחי) ועד ללא כהות בכלל</p>
+
+    <!-- Level 1: Current (Heavy) -->
+    <div class="preview-card">
+        <div class="preview-label">
+            <div class="num">1</div>
+            <h3>🌑 כהה מאוד - <strong>הנוכחי באתר</strong></h3>
+            <div class="level">85% כחול עמוק</div>
+        </div>
+        <div class="hero-preview level-1">
+            <div class="hero-content">
+                <h2 class="hero-title">ברוכים הבאים ל<span>פארק המים יבנה</span></h2>
+                <p class="hero-subtitle">30 דונם ירוקים - חדר כושר, בריכות שחייה, מגלשות, מתקני ספורט, חוגים, קפיטריה ועוד...</p>
+            </div>
+        </div>
+        <div class="preview-info">
+            ✏️ כתוביות בולטות מאוד, אבל התמונה כמעט לא נראית
+        </div>
+    </div>
+
+    <!-- Level 2: Medium-Heavy -->
+    <div class="preview-card">
+        <div class="preview-label">
+            <div class="num">2</div>
+            <h3>🌒 בינוני-כהה</h3>
+            <div class="level">60% כחול</div>
+        </div>
+        <div class="hero-preview level-2">
+            <div class="hero-content">
+                <h2 class="hero-title">ברוכים הבאים ל<span>פארק המים יבנה</span></h2>
+                <p class="hero-subtitle">30 דונם ירוקים - חדר כושר, בריכות שחייה, מגלשות, מתקני ספורט, חוגים, קפיטריה ועוד...</p>
+            </div>
+        </div>
+        <div class="preview-info">
+            ✏️ איזון טוב - רואים את התמונה אבל הכיתוב עדיין קריא
+        </div>
+    </div>
+
+    <!-- Level 3: Light Blue (RECOMMENDED) -->
+    <div class="preview-card">
+        <div class="preview-label">
+            <div class="num">3</div>
+            <h3>☀️ קל - גוון כחול עדין <span class="recommendation">🏆 מומלץ!</span></h3>
+            <div class="level">40% כחול</div>
+        </div>
+        <div class="hero-preview level-3">
+            <div class="hero-content">
+                <h2 class="hero-title">ברוכים הבאים ל<span>פארק המים יבנה</span></h2>
+                <p class="hero-subtitle">30 דונם ירוקים - חדר כושר, בריכות שחייה, מגלשות, מתקני ספורט, חוגים, קפיטריה ועוד...</p>
+            </div>
+        </div>
+        <div class="preview-info">
+            ✏️ <strong>איזון מושלם</strong> - התמונה זוהרת והכיתוב עדיין נראה
+        </div>
+    </div>
+
+    <!-- Level 4: Gradient bottom -->
+    <div class="preview-card">
+        <div class="preview-label">
+            <div class="num">4</div>
+            <h3>📐 גרדיאנט מלמטה</h3>
+            <div class="level">שחור 40% רק בתחתית</div>
+        </div>
+        <div class="hero-preview level-4">
+            <div class="hero-content">
+                <h2 class="hero-title">ברוכים הבאים ל<span>פארק המים יבנה</span></h2>
+                <p class="hero-subtitle">30 דונם ירוקים - חדר כושר, בריכות שחייה, מגלשות, מתקני ספורט, חוגים, קפיטריה ועוד...</p>
+            </div>
+        </div>
+        <div class="preview-info">
+            ✏️ התמונה נקייה למעלה, כיתוב בולט בזכות הצללה למטה
+        </div>
+    </div>
+
+    <!-- Level 5: Light Gradient -->
+    <div class="preview-card">
+        <div class="preview-label">
+            <div class="num">5</div>
+            <h3>🌤️ גרדיאנט עדין</h3>
+            <div class="level">שחור 30% רק חצי תחתון</div>
+        </div>
+        <div class="hero-preview level-5">
+            <div class="hero-content">
+                <h2 class="hero-title">ברוכים הבאים ל<span>פארק המים יבנה</span></h2>
+                <p class="hero-subtitle">30 דונם ירוקים - חדר כושר, בריכות שחייה, מגלשות, מתקני ספורט, חוגים, קפיטריה ועוד...</p>
+            </div>
+        </div>
+        <div class="preview-info">
+            ✏️ מינימליסטי וטבעי - הצללה רק מתחת לכיתוב
+        </div>
+    </div>
+
+    <!-- Level 6: No overlay -->
+    <div class="preview-card">
+        <div class="preview-label">
+            <div class="num">6</div>
+            <h3>🌞 ללא הצללה</h3>
+            <div class="level">0% - תמונה בלבד</div>
+        </div>
+        <div class="hero-preview level-6">
+            <div class="hero-content">
+                <h2 class="hero-title">ברוכים הבאים ל<span>פארק המים יבנה</span></h2>
+                <p class="hero-subtitle">30 דונם ירוקים - חדר כושר, בריכות שחייה, מגלשות, מתקני ספורט, חוגים, קפיטריה ועוד...</p>
+            </div>
+        </div>
+        <div class="preview-info">
+            ⚠️ הכי נקי - אבל הכיתוב עלול להיות פחות קריא בחלק מהתמונות
+        </div>
+    </div>
+
+    <div style="text-align: center; padding: 40px; color: #666;">
+        <h2 style="color: #0066cc; margin-bottom: 16px; font-size: 24px;">🎯 איך לבחור?</h2>
+        <p style="font-size: 17px; line-height: 1.7; max-width: 700px; margin: 0 auto;">
+            עיין באפשרויות, ותגיד לי <strong>מספר אחד</strong> שאתה הכי מעדיף.<br>
+            <strong>אם אתה רוצה - אפשר גם לערבב</strong> (למשל "רמה 3 אבל קצת יותר חזק").
+        </p>
+        <p style="margin-top: 24px; font-size: 16px; color: #888;">
+            💡 ההמלצה שלי: <strong style="color: #0066cc;">אפשרות 3</strong> - איזון מושלם בין נראות התמונה ובין קריאות הטקסט.
+        </p>
+    </div>
+
+</body>
+</html>
