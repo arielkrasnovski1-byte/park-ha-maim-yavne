@@ -212,11 +212,36 @@ async function handleLogout() {
     }
 }
 
+// A signed-in user is an admin only if a document exists at /admins/{uid}.
+// The Firestore rules are the real gate; this client-side check just gives a
+// clear message instead of an empty panel. A denied read or a missing doc both
+// mean "not an admin".
+async function isAuthorizedAdmin(user) {
+    try {
+        const snap = await getDoc(doc(db, 'admins', user.uid));
+        return snap.exists();
+    } catch (e) {
+        return false;
+    }
+}
+
+async function denyAccess(user) {
+    const uid = user.uid;
+    try { await signOut(auth); } catch (e) { /* ignore */ }
+    loginScreen.style.display = 'flex';
+    adminApp.style.display = 'none';
+    showLoginError('אין לך הרשאת גישה לפאנל הניהול. מזהה המשתמש שלך (UID): ' + uid);
+}
+
 // Listen for auth state
 if (isInitialized) {
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
         if (user) {
-            showAdmin(user);
+            if (await isAuthorizedAdmin(user)) {
+                showAdmin(user);
+            } else {
+                await denyAccess(user);
+            }
         } else {
             loginScreen.style.display = 'flex';
             adminApp.style.display = 'none';
