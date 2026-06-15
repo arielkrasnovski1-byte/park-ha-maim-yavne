@@ -4,6 +4,8 @@
 # Build/temp outputs (no need to commit)
 pdf-output/
 *.pdf
+# ...but the public bylaws document is part of the site
+!takanon.pdf
 
 # Unsorted user uploads (not part of the site)
 new images/
