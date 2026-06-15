@@ -673,7 +673,9 @@ function renderMessages() {
             // If click was inside the checkbox zone — handle selection only
             const zone = e.target.closest('[data-checkbox-zone]');
             if (zone) {
-                e.preventDefault();
+                // Don't preventDefault: clicking the checkbox itself must keep
+                // its native toggle. Only toggle manually when the click landed
+                // on the wrapper rather than the checkbox.
                 e.stopPropagation();
                 const checkbox = item.querySelector('input[type="checkbox"]');
                 if (e.target !== checkbox) checkbox.checked = !checkbox.checked;
