@@ -1,0 +1,72 @@
+rules_version = '2';
+
+// ============================================================
+// Firestore Security Rules — Park HaMayim Yavne
+// ------------------------------------------------------------
+// Security model:
+//   * The public website may READ content and SUBMIT the contact
+//     form only. It can do nothing else.
+//   * Only an *admin* may write content. "Admin" = an authenticated
+//     user whose UID has a document under /admins/{uid}.
+//   * Being signed in is NOT enough — the UID must be in /admins.
+//
+// To add an admin:
+//   1. Firebase Console > Authentication > Add user (email+password).
+//   2. Copy that user's User UID.
+//   3. Firestore > create document  admins/<that-uid>  (any fields,
+//      e.g. { email: "...", addedAt: <date> }).
+//   The /admins list itself can only be edited from the Console /
+//   Admin SDK — never from the website (allow write: if false).
+// ============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // --- Admin allowlist (managed only from the Console) ---
+    match /admins/{uid} {
+      allow read:  if isAdmin();
+      allow write: if false;
+    }
+
+    // --- Public contact form: anyone may CREATE a message ---
+    // Light validation to keep out garbage; admins manage them.
+    match /messages/{id} {
+      allow create: if request.resource.data.keys().hasAll(['name', 'content', 'createdAt'])
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() < 200
+                    && request.resource.data.content is string
+                    && request.resource.data.content.size() < 5000;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // --- "Trigger Email" extension queue ---
+    // NOTE: leaving create open here makes the project an open email
+    // relay. The proper fix is to write to /mail from a Cloud Function
+    // triggered on /messages create, then lock this to admin-only.
+    // Interim: only allow sending to the official mailbox.
+    match /mail/{id} {
+      allow create: if request.resource.data.to is list
+                    && request.resource.data.to.hasOnly(['mazkirot@parkhamaim.co.il']);
+      allow read, update, delete: if isAdmin();
+    }
+
+    // --- Public website content: world-readable, admin-writable ---
+    match /news/{id}       { allow read: if true; allow write: if isAdmin(); }
+    match /classes/{id}    { allow read: if true; allow write: if isAdmin(); }
+    match /gallery/{id}    { allow read: if true; allow write: if isAdmin(); }
+    match /elections/{id}  { allow read: if true; allow write: if isAdmin(); }
+    match /committees/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /settings/{id}   { allow read: if true; allow write: if isAdmin(); }
+
+    // --- Deny everything not matched above ---
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
