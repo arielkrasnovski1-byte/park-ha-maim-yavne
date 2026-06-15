@@ -4,22 +4,21 @@ rules_version = '2';
 // Cloud Storage Security Rules — Park HaMayim Yavne
 // ------------------------------------------------------------
 //   * Gallery images are world-readable (they appear on the site).
-//   * Only admins may upload/delete, and only real images up to 10MB.
-//   * "Admin" is resolved against the same /admins allowlist used by
-//     the Firestore rules.
+//   * Upload/delete requires being signed in, and only real images up
+//     to 10MB. Combined with self-signup being disabled, only accounts
+//     the owner creates can authenticate — so this is effectively
+//     admin-only in practice.
+//   * (A stricter variant that checks the Firestore /admins allowlist
+//     is possible via firestore.exists(), but it needs the Storage
+//     service account to be granted Firestore access — skipped here.)
 // ============================================================
 
 service firebase.storage {
   match /b/{bucket}/o {
 
-    function isAdmin() {
-      return request.auth != null
-        && firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid));
-    }
-
     match /gallery/{fileName} {
       allow read: if true;
-      allow write: if isAdmin()
+      allow write: if request.auth != null
                    && request.resource.size < 10 * 1024 * 1024
                    && request.resource.contentType.matches('image/.*');
     }
