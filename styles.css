@@ -3035,7 +3035,7 @@ body.a11y-keyboard-focus *:focus {
     }
 
     .hero-content {
-        grid-template-columns: 1fr;
+        flex-direction: column;
         gap: 40px;
     }
 
