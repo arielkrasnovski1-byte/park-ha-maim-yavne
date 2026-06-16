@@ -1,0 +1,21 @@
+{
+  "hosting": {
+    "public": ".",
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "ignore": [
+      "firebase.json",
+      ".firebaserc",
+      "**/.*",
+      "**/node_modules/**",
+      "*.md",
+      "firestore.rules",
+      "storage.rules",
+      "preview-*.html",
+      "_*.html",
+      "פארק-המים-יבנה-מצגת-האתר.pdf",
+      "new images/**",
+      "pdf-output/**"
+    ]
+  }
+}
