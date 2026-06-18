@@ -464,7 +464,7 @@ function initFacilityStatus() {
             }
         },
         {
-            name: 'בריכה מקורה',
+            name: 'בריכה מקורה', membersOnly: true,
             icon: 'fas fa-swimming-pool',
             yearRound: true,
             schedule: {
@@ -478,7 +478,7 @@ function initFacilityStatus() {
             }
         },
         {
-            name: 'חדר כושר',
+            name: 'חדר כושר', membersOnly: true,
             icon: 'fas fa-dumbbell',
             yearRound: true,
             schedule: {
@@ -628,7 +628,7 @@ function initFacilityStatus() {
                 <div class="facility-top">
                     <span class="facility-name">
                         <i class="${facility.icon}"></i>
-                        ${facility.name}
+                        ${facility.name}${facility.membersOnly ? '<span class="facility-star">*</span>' : ''}
                     </span>
                     ${statusBadge}
                 </div>

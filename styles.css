@@ -877,6 +877,19 @@ button {
     position: relative;
 }
 
+.facility-star {
+    color: #fbbf24;
+    font-weight: 800;
+    margin-inline-start: 2px;
+}
+
+.facility-note {
+    margin: 12px 0 0;
+    font-size: 11px;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.75);
+}
+
 .facility-item {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.18);
