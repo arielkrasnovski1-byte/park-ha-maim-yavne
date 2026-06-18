@@ -292,6 +292,17 @@
                     </div>
 
                     <div class="card-form">
+                        <h3>סדר הצגת הבלוקים בדף הבית</h3>
+                        <div class="form-group">
+                            <label>מה מופיע קודם?</label>
+                            <select id="hoursOrder">
+                                <option value="summer">קודם "עונת קיץ", ואז "כל השנה"</option>
+                                <option value="year">קודם "כל השנה", ואז "עונת קיץ"</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="card-form">
                         <h3>כותרות ותאריכים — בלוק "עונת קיץ"</h3>
                         <div class="form-row">
                             <div class="form-group">
@@ -308,8 +319,8 @@
                             <input type="text" id="hSummerChip" placeholder="🌞 עונת קיץ">
                         </div>
                         <div class="form-group">
-                            <label>כותרת (התאריכים יתווספו אוטומטית)</label>
-                            <input type="text" id="hSummerTitle" placeholder="שעות פתיחה">
+                            <label>כותרת מלאה (טקסט חופשי)</label>
+                            <input type="text" id="hSummerTitle" placeholder="שעות פתיחה - מאי-יוני 2026">
                         </div>
                         <div class="form-group">
                             <label>רשימת המתקנים (מופיעה בכיתוב)</label>
@@ -619,6 +630,6 @@
     </div>
 
     <!-- Firebase v9 SDK + App Logic -->
-    <script type="module" src="admin.js?v=20260615g"></script>
+    <script type="module" src="admin.js?v=20260615h"></script>
 </body>
 </html>

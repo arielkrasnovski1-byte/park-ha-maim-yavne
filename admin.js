@@ -1518,8 +1518,9 @@ async function loadHours() {
             if ($('hoursEndDate')) $('hoursEndDate').value = dmyToISO(period.end || '');
             const h = hoursData.headers || {};
             if ($('hSummerChip')) $('hSummerChip').value = h.summerChip ?? '🌞 עונת קיץ';
-            if ($('hSummerTitle')) $('hSummerTitle').value = h.summerTitle ?? 'שעות פתיחה';
+            if ($('hSummerTitle')) $('hSummerTitle').value = h.summerTitle ?? 'שעות פתיחה - מאי-יוני 2026';
             if ($('hSummerFacilities')) $('hSummerFacilities').value = h.summerFacilities ?? 'בריכה אמורפית, בריכת פעוטות, מגלשות ומשרד';
+            if ($('hoursOrder')) $('hoursOrder').value = (hoursData.summerFirst === false) ? 'year' : 'summer';
             if ($('hYrChip')) $('hYrChip').value = h.yrChip ?? '🏊 כל השנה';
             if ($('hYrTitle')) $('hYrTitle').value = h.yrTitle ?? 'שעות פעילות - בריכה מקורה וחדר כושר';
             if ($('hYrSubtitle')) $('hYrSubtitle').value = h.yrSubtitle ?? 'פתוחים כל השנה (חורף וקיץ) — לחברי עמותה בלבד';
@@ -1766,6 +1767,7 @@ async function saveHours() {
             yrTitle: ($('hYrTitle')?.value || '').trim(),
             yrSubtitle: ($('hYrSubtitle')?.value || '').trim()
         },
+        summerFirst: ($('hoursOrder')?.value || 'summer') !== 'year',
         facilities: facilities
     };
 

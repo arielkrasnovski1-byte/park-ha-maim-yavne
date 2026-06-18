@@ -131,17 +131,6 @@ async function loadPublicNews() {
 // ============================================
 // Load Hours - Updates time table cells & period
 // ============================================
-function monthRange(startDMY, endDMY) {
-    const months = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
-    const ps = String(startDMY || '').split('.');
-    const pe = String(endDMY || '').split('.');
-    if (ps.length !== 3 || pe.length !== 3) return '';
-    const sm = parseInt(ps[1]), em = parseInt(pe[1]), ey = pe[2];
-    if (!sm || !em) return '';
-    if (sm === em) return `${months[sm - 1]} ${ey}`;
-    return `${months[sm - 1]}–${months[em - 1]} ${ey}`;
-}
-
 async function loadPublicHours() {
     try {
         const snap = await getDoc(doc(db, 'settings', 'hours'));
@@ -155,11 +144,7 @@ async function loadPublicHours() {
         const sChip = document.getElementById('hoursSummerChip');
         if (sChip && h.summerChip) sChip.textContent = h.summerChip;
         const sTitle = document.getElementById('hoursTitle');
-        if (sTitle) {
-            const prefix = h.summerTitle || period.label || 'שעות פתיחה';
-            const mr = monthRange(period.start, period.end);
-            sTitle.textContent = mr ? `${prefix} - ${mr}` : prefix;
-        }
+        if (sTitle && h.summerTitle) sTitle.textContent = h.summerTitle;
         if (period.start && period.end) {
             const desc = document.getElementById('hoursPeriodDesc');
             if (desc) {
@@ -175,6 +160,15 @@ async function loadPublicHours() {
         if (yTitle && h.yrTitle) yTitle.textContent = h.yrTitle;
         const yDesc = document.getElementById('hoursYrDesc');
         if (yDesc && h.yrSubtitle) yDesc.textContent = h.yrSubtitle;
+
+        // --- Block order (which hours block appears first) ---
+        if (data.summerFirst === false) {
+            const summerBlock = document.getElementById('hoursSummerBlock');
+            const yrBlock = document.getElementById('hoursYrBlock');
+            if (summerBlock && yrBlock && yrBlock.parentNode) {
+                yrBlock.parentNode.insertBefore(yrBlock, summerBlock);
+            }
+        }
 
         // Add per-facility period badges under table headers (idempotent)
         const tableHead = document.querySelector('.full-hours-table thead tr');
