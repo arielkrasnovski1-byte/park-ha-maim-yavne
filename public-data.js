@@ -366,8 +366,8 @@ async function loadPublicClasses() {
                             <div class="tl-card-body">
                                 <div class="tl-card-name"><span class="tl-emoji ${escapeHtml(c.category || '')}"><i class="fas fa-${escapeHtml(c.icon || 'star')}"></i></span>${escapeHtml(c.name)}</div>
                                 ${c.instructor ? `<div class="tl-card-inst"><i class="fas fa-user"></i>${escapeHtml(c.instructor)}</div>` : ''}
-                                <div class="tl-card-price ${(c.price || '').includes('מנוי') ? 'members' : ''}">
-                                    <i class="fas fa-${(c.price || '').includes('מנוי') ? 'star' : 'tag'}"></i> ${escapeHtml(c.price || '')}
+                                <div class="tl-card-price ${/מנוי|עמות/.test(c.price || '') ? 'members' : ''}">
+                                    <i class="fas fa-${/מנוי|עמות/.test(c.price || '') ? 'star' : 'tag'}"></i> ${escapeHtml(c.price || '')}
                                 </div>
                             </div>
                         </div>
@@ -575,7 +575,7 @@ function initContactForm() {
 
     const subjectLabels = {
         reservation: 'הזמנת ביקור',
-        membership: 'מנוי שנתי',
+        membership: 'חברות בעמותה',
         event: 'אירוע פרטי',
         classes: 'חוגים',
         info: 'מידע כללי',

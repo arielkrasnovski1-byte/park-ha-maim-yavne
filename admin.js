@@ -361,7 +361,7 @@ function renderQuickReplies() {
                 <i class="fas fa-bolt"></i>
                 <p>אין תשובות שמורות. הוסף תשובה ראשונה כדי להתחיל!</p>
                 <p style="margin-top: 8px; font-size: 13px; opacity: 0.8;">
-                    דוגמאות: "תודה על פנייתך", "מחיר מנוי שנתי", "שעות פעילות"
+                    דוגמאות: "תודה על פנייתך", "מחיר חברות", "שעות פעילות"
                 </p>
             </div>`;
         return;
@@ -510,7 +510,7 @@ const MSG_STATUS = {
 
 const SUBJECT_LABELS = {
     reservation: 'הזמנת ביקור',
-    membership: 'מנוי שנתי',
+    membership: 'חברות בעמותה',
     event: 'אירוע פרטי',
     classes: 'חוגים',
     info: 'מידע כללי',
@@ -805,7 +805,7 @@ function openBulkQuickReplyModal() {
                 <i class="fas fa-bolt" style="font-size: 56px; color: #fbbf24; margin-bottom: 16px;"></i>
                 <h4 style="margin-bottom: 10px; font-size: 18px;">אין עדיין תבניות תשובה</h4>
                 <p style="color: var(--admin-text-muted); margin-bottom: 24px; max-width: 480px; margin-left: auto; margin-right: auto;">
-                    תשובות מהירות חוסכות זמן יקר. צור תבניות נפוצות כמו "תודה על פנייתך", "מחיר מנוי", "שעות פעילות" — ושלח אותן בלחיצה אחת לכל הלקוחות שסימנת.
+                    תשובות מהירות חוסכות זמן יקר. צור תבניות נפוצות כמו "תודה על פנייתך", "מחיר חברות", "שעות פעילות" — ושלח אותן בלחיצה אחת לכל הלקוחות שסימנת.
                 </p>
                 <button class="btn-primary" id="goCreateTemplatesBtn">
                     <i class="fas fa-plus"></i> צור תבנית ראשונה עכשיו
@@ -2314,7 +2314,7 @@ function showClassForm(existing = null) {
             </div>
         </div>
         <div class="form-group">
-            <label>מחיר (לדוגמה: "220 ₪" / "למנויים בלבד" / "200/300/400 ₪")</label>
+            <label>מחיר (לדוגמה: "220 ₪" / "לחברי העמותה בלבד" / "200/300/400 ₪")</label>
             <input type="text" id="classPrice" value="${escapeHtml(existing?.price || '')}" placeholder="220 ₪">
         </div>
         <div class="modal-footer">
