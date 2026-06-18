@@ -5385,12 +5385,18 @@ body.a11y-keyboard-focus *:focus {
     .attraction-detail,
     .attraction-detail.reverse {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 24px;
         margin-bottom: 70px;
     }
 
+    /* On mobile: title + text first, image below */
+    .attraction-detail .attraction-detail-content,
+    .attraction-detail.reverse .attraction-detail-content {
+        order: 1;
+    }
+    .attraction-detail .attraction-detail-img,
     .attraction-detail.reverse .attraction-detail-img {
-        order: 0;
+        order: 2;
     }
 }
 
