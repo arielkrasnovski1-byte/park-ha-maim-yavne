@@ -464,7 +464,7 @@ function initFacilityStatus() {
             }
         },
         {
-            name: 'בריכה מקורה', membersOnly: true,
+            name: 'בריכה מקורה', membersOnly: true, maintenanceFirstSunday: true,
             icon: 'fas fa-swimming-pool',
             yearRound: true,
             schedule: {
@@ -521,6 +521,8 @@ function initFacilityStatus() {
         const now = new Date();
         const currentDay = now.getDay();
         const currentMinutes = now.getHours() * 60 + now.getMinutes();
+        // First Sunday of the month = a Sunday falling on dates 1–7
+        const isFirstSunday = currentDay === 0 && now.getDate() <= 7;
 
         // Update header
         const timeStr = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
@@ -540,7 +542,14 @@ function initFacilityStatus() {
 
             let statusBadge, hoursText, progressBar, remainingText;
 
-            if (todayHours) {
+            if (facility.maintenanceFirstSunday && isFirstSunday) {
+                // Closed on the first Sunday of the month for thorough maintenance
+                item.classList.add('facility-closed');
+                statusBadge = `<span class="facility-badge closed"><i class="fas fa-tools"></i> סגור לטיפול</span>`;
+                hoursText = 'טיפול יסודי חודשי';
+                progressBar = '';
+                remainingText = `<i class="fas fa-tools"></i> סגור היום לטיפול יסודי`;
+            } else if (todayHours) {
                 // Build list of active segments today (1 or 2 segments)
                 const segments = [{ open: todayHours.open, close: todayHours.close }];
                 if (todayHours.open2 && todayHours.close2) {
@@ -628,7 +637,7 @@ function initFacilityStatus() {
                 <div class="facility-top">
                     <span class="facility-name">
                         <i class="${facility.icon}"></i>
-                        ${facility.name}${facility.membersOnly ? '<span class="facility-star">*</span>' : ''}
+                        ${facility.name}${facility.membersOnly ? '<span class="facility-star">*</span>' : ''}${facility.maintenanceFirstSunday ? '<span class="facility-star">**</span>' : ''}
                     </span>
                     ${statusBadge}
                 </div>
