@@ -292,16 +292,44 @@
                     </div>
 
                     <div class="card-form">
-                        <h3>תקופה</h3>
+                        <h3>כותרות ותאריכים — בלוק "עונת קיץ"</h3>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>תאריך התחלה</label>
-                                <input type="text" id="hoursStartDate" value="29.5.2026">
+                                <label>תאריך התחלה (לוח שנה)</label>
+                                <input type="date" id="hoursStartDate">
                             </div>
                             <div class="form-group">
-                                <label>תאריך סיום</label>
-                                <input type="text" id="hoursEndDate" value="18.6.2026">
+                                <label>תאריך סיום (לוח שנה)</label>
+                                <input type="date" id="hoursEndDate">
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label>תווית (צ'יפ)</label>
+                            <input type="text" id="hSummerChip" placeholder="🌞 עונת קיץ">
+                        </div>
+                        <div class="form-group">
+                            <label>כותרת (התאריכים יתווספו אוטומטית)</label>
+                            <input type="text" id="hSummerTitle" placeholder="שעות פתיחה">
+                        </div>
+                        <div class="form-group">
+                            <label>רשימת המתקנים (מופיעה בכיתוב)</label>
+                            <input type="text" id="hSummerFacilities" placeholder="בריכה אמורפית, בריכת פעוטות, מגלשות ומשרד">
+                        </div>
+                    </div>
+
+                    <div class="card-form">
+                        <h3>כותרות — בלוק "כל השנה" (בריכה מקורה וחדר כושר)</h3>
+                        <div class="form-group">
+                            <label>תווית (צ'יפ)</label>
+                            <input type="text" id="hYrChip" placeholder="🏊 כל השנה">
+                        </div>
+                        <div class="form-group">
+                            <label>כותרת</label>
+                            <input type="text" id="hYrTitle" placeholder="שעות פעילות - בריכה מקורה וחדר כושר">
+                        </div>
+                        <div class="form-group">
+                            <label>כיתוב</label>
+                            <input type="text" id="hYrSubtitle" placeholder="פתוחים כל השנה (חורף וקיץ) — לחברי עמותה בלבד">
                         </div>
                     </div>
 
@@ -591,6 +619,6 @@
     </div>
 
     <!-- Firebase v9 SDK + App Logic -->
-    <script type="module" src="admin.js?v=20260615f"></script>
+    <script type="module" src="admin.js?v=20260615g"></script>
 </body>
 </html>

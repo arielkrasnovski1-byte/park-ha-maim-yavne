@@ -1491,6 +1491,22 @@ async function deleteNews(id) {
 // ============================================
 let hoursData = null;
 
+// Date format helpers: storage is "d.m.yyyy"; <input type="date"> uses ISO "yyyy-mm-dd"
+function dmyToISO(s) {
+    if (!s) return '';
+    const p = String(s).split('.');
+    if (p.length !== 3) return '';
+    const [d, m, y] = p;
+    return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+}
+function isoToDMY(s) {
+    if (!s) return '';
+    const p = String(s).split('-');
+    if (p.length !== 3) return '';
+    const [y, m, d] = p;
+    return `${parseInt(d)}.${parseInt(m)}.${y}`;
+}
+
 async function loadHours() {
     if (DEMO_MODE || !isInitialized) return;
     try {
@@ -1498,8 +1514,15 @@ async function loadHours() {
         if (snap.exists()) {
             hoursData = snap.data();
             const period = hoursData.period || {};
-            if ($('hoursStartDate')) $('hoursStartDate').value = period.start || '';
-            if ($('hoursEndDate')) $('hoursEndDate').value = period.end || '';
+            if ($('hoursStartDate')) $('hoursStartDate').value = dmyToISO(period.start || '');
+            if ($('hoursEndDate')) $('hoursEndDate').value = dmyToISO(period.end || '');
+            const h = hoursData.headers || {};
+            if ($('hSummerChip')) $('hSummerChip').value = h.summerChip ?? '🌞 עונת קיץ';
+            if ($('hSummerTitle')) $('hSummerTitle').value = h.summerTitle ?? 'שעות פתיחה';
+            if ($('hSummerFacilities')) $('hSummerFacilities').value = h.summerFacilities ?? 'בריכה אמורפית, בריכת פעוטות, מגלשות ומשרד';
+            if ($('hYrChip')) $('hYrChip').value = h.yrChip ?? '🏊 כל השנה';
+            if ($('hYrTitle')) $('hYrTitle').value = h.yrTitle ?? 'שעות פעילות - בריכה מקורה וחדר כושר';
+            if ($('hYrSubtitle')) $('hYrSubtitle').value = h.yrSubtitle ?? 'פתוחים כל השנה (חורף וקיץ) — לחברי עמותה בלבד';
         }
     } catch (e) {
         console.error('Failed to load hours:', e);
@@ -1731,9 +1754,17 @@ async function saveHours() {
 
     const data = {
         period: {
-            start: $('hoursStartDate')?.value || '',
-            end: $('hoursEndDate')?.value || '',
-            label: 'שעות פתיחה'
+            start: isoToDMY($('hoursStartDate')?.value || ''),
+            end: isoToDMY($('hoursEndDate')?.value || ''),
+            label: ($('hSummerTitle')?.value || 'שעות פתיחה').trim()
+        },
+        headers: {
+            summerChip: ($('hSummerChip')?.value || '').trim(),
+            summerTitle: ($('hSummerTitle')?.value || '').trim(),
+            summerFacilities: ($('hSummerFacilities')?.value || '').trim(),
+            yrChip: ($('hYrChip')?.value || '').trim(),
+            yrTitle: ($('hYrTitle')?.value || '').trim(),
+            yrSubtitle: ($('hYrSubtitle')?.value || '').trim()
         },
         facilities: facilities
     };

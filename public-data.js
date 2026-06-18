@@ -131,6 +131,17 @@ async function loadPublicNews() {
 // ============================================
 // Load Hours - Updates time table cells & period
 // ============================================
+function monthRange(startDMY, endDMY) {
+    const months = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
+    const ps = String(startDMY || '').split('.');
+    const pe = String(endDMY || '').split('.');
+    if (ps.length !== 3 || pe.length !== 3) return '';
+    const sm = parseInt(ps[1]), em = parseInt(pe[1]), ey = pe[2];
+    if (!sm || !em) return '';
+    if (sm === em) return `${months[sm - 1]} ${ey}`;
+    return `${months[sm - 1]}–${months[em - 1]} ${ey}`;
+}
+
 async function loadPublicHours() {
     try {
         const snap = await getDoc(doc(db, 'settings', 'hours'));
@@ -138,14 +149,32 @@ async function loadPublicHours() {
         const data = snap.data();
         const facilities = data.facilities || {};
         const period = data.period || {};
+        const h = data.headers || {};
 
-        // Update main period header
+        // --- Summer block headers ---
+        const sChip = document.getElementById('hoursSummerChip');
+        if (sChip && h.summerChip) sChip.textContent = h.summerChip;
+        const sTitle = document.getElementById('hoursTitle');
+        if (sTitle) {
+            const prefix = h.summerTitle || period.label || 'שעות פתיחה';
+            const mr = monthRange(period.start, period.end);
+            sTitle.textContent = mr ? `${prefix} - ${mr}` : prefix;
+        }
         if (period.start && period.end) {
             const desc = document.getElementById('hoursPeriodDesc');
             if (desc) {
-                desc.textContent = `החל מ-${period.start} ועד ${period.end} • בריכה אמורפית, בריכת פעוטות, מגלשות ומשרד`;
+                const facs = h.summerFacilities || 'בריכה אמורפית, בריכת פעוטות, מגלשות ומשרד';
+                desc.textContent = `החל מ-${period.start} ועד ${period.end} • ${facs}`;
             }
         }
+
+        // --- Year-round block headers ---
+        const yChip = document.getElementById('hoursYrChip');
+        if (yChip && h.yrChip) yChip.textContent = h.yrChip;
+        const yTitle = document.getElementById('hoursYrTitle');
+        if (yTitle && h.yrTitle) yTitle.textContent = h.yrTitle;
+        const yDesc = document.getElementById('hoursYrDesc');
+        if (yDesc && h.yrSubtitle) yDesc.textContent = h.yrSubtitle;
 
         // Add per-facility period badges under table headers (idempotent)
         const tableHead = document.querySelector('.full-hours-table thead tr');
