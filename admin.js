@@ -1548,7 +1548,11 @@ function buildHoursEditor() {
     const sortedKeys = Object.keys(facilities).sort((a, b) =>
         (facilities[a].order || 99) - (facilities[b].order || 99));
 
-    editor.innerHTML = sortedKeys.map(fid => {
+    const timeOpts = [];
+    for (let hh = 0; hh < 24; hh++) for (let mm = 0; mm < 60; mm += 15) timeOpts.push(`${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`);
+    const timeDatalist = `<datalist id="timeOptions15">${timeOpts.map(t => `<option value="${t}"></option>`).join('')}</datalist>`;
+
+    editor.innerHTML = timeDatalist + sortedKeys.map(fid => {
         const f = facilities[fid];
         const period = f.period || {};
         const enabled = f.enabled !== false; // default true
@@ -1565,9 +1569,6 @@ function buildHoursEditor() {
                     </label>
                 </div>
                 <div class="facility-quick-actions">
-                    <button class="quick-btn" data-quick-action="weekdays" data-facility-action="${fid}" title="העתק יום שני לכל ימי החול">
-                        <i class="fas fa-copy"></i> העתק לימי חול
-                    </button>
                     <button class="quick-btn" data-quick-action="closeall" data-facility-action="${fid}" title="סגור את כל הימים">
                         <i class="fas fa-times-circle"></i> סגור הכל
                     </button>
@@ -1598,13 +1599,13 @@ function buildHoursEditor() {
                         <label>${day}</label>
                         <div class="day-segments">
                             <div class="day-segment">
-                                <input type="time" data-facility="${fid}" data-day="${i}" data-field="open" value="${dayData.open || ''}" placeholder="פתיחה">
-                                <input type="time" data-facility="${fid}" data-day="${i}" data-field="close" value="${dayData.close || ''}" placeholder="סגירה">
+                                <input type="text" list="timeOptions15" inputmode="numeric" maxlength="5" data-facility="${fid}" data-day="${i}" data-field="open" value="${dayData.open || ''}" placeholder="פתיחה">
+                                <input type="text" list="timeOptions15" inputmode="numeric" maxlength="5" data-facility="${fid}" data-day="${i}" data-field="close" value="${dayData.close || ''}" placeholder="סגירה">
                             </div>
                             <div class="day-segment day-segment-2" style="${hasSegment2 ? '' : 'display:none;'}">
                                 <span class="segment-sep">+</span>
-                                <input type="time" data-facility="${fid}" data-day="${i}" data-field="open2" value="${dayData.open2 || ''}" placeholder="פתיחה 2">
-                                <input type="time" data-facility="${fid}" data-day="${i}" data-field="close2" value="${dayData.close2 || ''}" placeholder="סגירה 2">
+                                <input type="text" list="timeOptions15" inputmode="numeric" maxlength="5" data-facility="${fid}" data-day="${i}" data-field="open2" value="${dayData.open2 || ''}" placeholder="פתיחה 2">
+                                <input type="text" list="timeOptions15" inputmode="numeric" maxlength="5" data-facility="${fid}" data-day="${i}" data-field="close2" value="${dayData.close2 || ''}" placeholder="סגירה 2">
                             </div>
                             <button type="button" class="add-segment-btn" data-add-segment="${fid}|${i}" title="הוסף קטע נוסף ביום (למשל בוקר + ערב)" style="${hasSegment2 ? 'display:none;' : ''}">
                                 <i class="fas fa-plus"></i>
