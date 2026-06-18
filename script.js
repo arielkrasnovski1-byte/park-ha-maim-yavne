@@ -637,7 +637,7 @@ function initFacilityStatus() {
                 <div class="facility-top">
                     <span class="facility-name">
                         <i class="${facility.icon}"></i>
-                        ${facility.name}${facility.membersOnly ? '<span class="facility-star">*</span>' : ''}${facility.maintenanceFirstSunday ? '<span class="facility-star">**</span>' : ''}
+                        ${facility.name}${facility.membersOnly ? '<span class="facility-star">*</span>' : ''}
                     </span>
                     ${statusBadge}
                 </div>
