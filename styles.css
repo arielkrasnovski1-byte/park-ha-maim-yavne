@@ -3004,7 +3004,7 @@ body.a11y-keyboard-focus *:focus {
 /* ============================================
    Responsive
    ============================================ */
-@media (max-width: 1100px) {
+@media (max-width: 1024px) {
     .container {
         padding: 0 24px;
     }
