@@ -222,16 +222,15 @@ document.addEventListener('DOMContentLoaded', function () {
     // second submit listener would fire alongside it and show a fake "sent"
     // message even when validation fails or the write never happens.
 
-    // --- FAQ Accordion ---
-    document.querySelectorAll('.faq-item').forEach(item => {
-        const question = item.querySelector('.faq-question');
-        if (question) {
-            question.addEventListener('click', () => {
-                const isActive = item.classList.contains('active');
-                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
-                if (!isActive) item.classList.add('active');
-            });
-        }
+    // --- FAQ Accordion (event-delegated so dynamically-loaded items work too) ---
+    document.addEventListener('click', (e) => {
+        const question = e.target.closest('.faq-question');
+        if (!question) return;
+        const item = question.closest('.faq-item');
+        if (!item) return;
+        const isActive = item.classList.contains('active');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+        if (!isActive) item.classList.add('active');
     });
 
     // --- Gallery Lightbox (basic) ---

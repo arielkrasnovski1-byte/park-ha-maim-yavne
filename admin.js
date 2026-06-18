@@ -272,6 +272,7 @@ function navigateTo(section) {
         board: { icon: 'users', text: 'חברי ועד' },
         elections: { icon: 'vote-yea', text: 'תוצאות בחירות' },
         gallery: { icon: 'images', text: 'גלריה' },
+        faq: { icon: 'circle-question', text: 'מידע שימושי' },
         contact: { icon: 'address-card', text: 'פרטי קשר' },
         settings: { icon: 'cog', text: 'הגדרות' }
     };
@@ -2378,6 +2379,130 @@ function switchClassDay(day) {
 }
 
 // ============================================
+// FAQ / מידע שימושי
+// ============================================
+async function loadFaq() {
+    if (DEMO_MODE || !isInitialized) return;
+    const list = $('faqList');
+    if (!list) return;
+    try {
+        const snap = await getDocs(collection(db, 'faq'));
+        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+            .sort((a, b) => (a.order || 0) - (b.order || 0));
+        if (items.length === 0) {
+            list.innerHTML = `<div class="empty-state"><i class="fas fa-circle-question"></i><p>אין שאלות עדיין. לחץ "הוסף שאלה" כדי להתחיל.</p></div>`;
+            return;
+        }
+        list.innerHTML = items.map(f => `
+            <div class="list-item">
+                <div class="list-item-content">
+                    <div class="list-item-title">${escapeHtml(f.question || '')}</div>
+                    <div class="list-item-meta">${escapeHtml((f.answer || '').replace(/\n/g, ' ').slice(0, 90))}${(f.answer || '').length > 90 ? '…' : ''}</div>
+                </div>
+                <div class="list-item-actions">
+                    <button class="icon-btn" data-faq-edit="${f.id}" title="ערוך"><i class="fas fa-edit"></i></button>
+                    <button class="icon-btn danger" data-faq-delete="${f.id}" title="מחק"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `).join('');
+        list.querySelectorAll('[data-faq-edit]').forEach(btn => {
+            btn.onclick = () => editFaq(btn.getAttribute('data-faq-edit'));
+        });
+        list.querySelectorAll('[data-faq-delete]').forEach(btn => {
+            btn.onclick = () => deleteFaq(btn.getAttribute('data-faq-delete'));
+        });
+    } catch (e) {
+        console.error('Failed to load FAQ:', e);
+    }
+}
+
+function showFaqForm(existing = null) {
+    const html = `
+        <div class="modal-header">
+            <h3>${existing ? 'עריכת שאלה' : 'שאלה חדשה'}</h3>
+            <button class="modal-close" data-modal-close>×</button>
+        </div>
+        <div class="form-group">
+            <label>השאלה</label>
+            <input type="text" id="faqQuestion" value="${escapeHtml(existing?.question || '')}" placeholder="לדוגמה: האם יש חניה במקום?">
+        </div>
+        <div class="form-group">
+            <label>התשובה (אפשר לרדת שורה כדי לפצל לפסקאות)</label>
+            <textarea id="faqAnswer" rows="7" placeholder="כתוב כאן את התשובה...">${escapeHtml(existing?.answer || '')}</textarea>
+        </div>
+        <div class="form-group">
+            <label>סדר הופעה (מספר נמוך = מופיע למעלה)</label>
+            <input type="number" id="faqOrder" value="${existing?.order ?? 99}">
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" data-modal-close>ביטול</button>
+            <button class="btn-primary" data-modal-save><i class="fas fa-save"></i> שמירה</button>
+        </div>
+    `;
+    showModal(html, async (modal) => {
+        const data = {
+            question: modal.querySelector('#faqQuestion').value.trim(),
+            answer: modal.querySelector('#faqAnswer').value.trim(),
+            order: parseInt(modal.querySelector('#faqOrder').value) || 99
+        };
+        if (!data.question || !data.answer) {
+            showToast('שאלה ותשובה הן שדות חובה', 'error');
+            return;
+        }
+        try {
+            if (existing) {
+                await updateDoc(doc(db, 'faq', existing.id), data);
+            } else {
+                await addDoc(collection(db, 'faq'), { ...data, createdAt: serverTimestamp() });
+            }
+            closeModal();
+            await loadFaq();
+            showToast(existing ? 'השאלה עודכנה' : 'השאלה נוספה!');
+        } catch (e) {
+            showToast('שגיאה בשמירה: ' + e.message, 'error');
+        }
+    });
+}
+
+async function editFaq(id) {
+    const snap = await getDoc(doc(db, 'faq', id));
+    if (snap.exists()) showFaqForm({ id, ...snap.data() });
+}
+
+async function deleteFaq(id) {
+    if (!confirm('האם למחוק את השאלה?')) return;
+    await deleteDoc(doc(db, 'faq', id));
+    await loadFaq();
+    showToast('השאלה נמחקה');
+}
+
+// Seed the current static FAQ into Firestore on first run (so it's editable)
+async function autoSeedFaq() {
+    if (DEMO_MODE || !isInitialized) return;
+    try {
+        const snap = await getDocs(collection(db, 'faq'));
+        if (!snap.empty) return;
+        const seed = [
+            { question: 'מהן שעות הפתיחה של הפארק?', answer: 'שעות פעילות עונת הקיץ (29.5–18.6.2026):\nבריכה אמורפית ובריכת פעוטות: ראשון 14:00-19:00, שני-חמישי 12:00-19:00, שישי 10:00-17:45, שבת 09:00-17:45.\nמגלשות מים: שישי 12:00-16:45, שבת 10:00-16:45.\nמשרד: שישי 09:00-13:00, שבת 09:00-14:00.\nלטבלת השעות המעודכנת ביותר ולשעות חורף — ראו עמוד הבית.' },
+            { question: 'מי רשאי להיכנס לפארק? (שאינו חבר עמותה)', answer: 'בימים א\'–ה\': תושבי יבנה, דור המשך (בכניסות חד פעמיות), אורחים וחיצוניים (שאינם חברי עמותה או תושבי יבנה) רשאים להיכנס לפארק — למתקנים החיצוניים בלבד (מדשאות, בריכות ומגלשות).\nבסופי שבוע: אין כניסה לאורחים ולחיצוניים שאינם תושבי יבנה, למעט חברי עמותה ובני משפחותם — בשל מגבלות עומס ובטיחות.\nתושבי יבנה בסופי שבוע: כניסה בכמות מוגבלת ובתיאום מראש מול מזכירות הפארק, במהלך אותו שבוע (בימים א\'–ד\').' },
+            { question: 'האם יש חניה במקום?', answer: 'כן, יש חניון רחב וחינמי במקום שמכיל מאות מקומות חניה. יש בו חניות נכים נגישות.' },
+            { question: 'האם הפארק נגיש לאנשים עם מוגבלויות?', answer: 'הפארק נגיש במלואו לאנשים עם מוגבלויות: רמפות גישה, מעלון לבריכה, מעלית לקומה השנייה, שירותים נגישים, חדרי הלבשה מותאמים וצוות מיומן לסיוע. ניתן לתאם מראש סיוע נוסף.' },
+            { question: 'האם אפשר להביא אוכל מהבית?', answer: 'כן, מותר להביא אוכל ומשקאות מהבית. יש אזורי פיקניק מוצלים עם שולחנות. בנוסף יש קפיטריה במקום עם מגוון עשיר. (לרשימת פריטים שלא ניתן להכניס — ראו השאלה הבאה)' },
+            { question: 'מה אסור להביא לפארק?', answer: 'לטובת בטיחות ונוחות כל המבקרים, אסור להכניס לפארק את הפריטים הבאים:\n❌ בקבוקי זכוכית\n❌ משקאות אלכוהוליים\n❌ צידניות קשיחות (מותרות צידניות רכות בלבד)\n❌ עגלות שטח' },
+            { question: 'האם יש חוגי שחייה לילדים?', answer: 'כן! יש לנו תכנית רחבה של חוגי שחייה לכל הגילאים והרמות, החל מגיל 4. מאמני שחייה מוסמכים, קבוצות קטנות ושיטות לימוד מודרניות. למידע ולהרשמה - צרו קשר.' },
+            { question: 'האם יש מצילים בפארק?', answer: 'כמובן! יש צוות מצילים מוסמכים בכל הבריכות במהלך שעות הפעילות. בנוסף יש עזרים בטיחותיים, מד עומק ברור, וצוות מיומן בעזרה ראשונה.' },
+            { question: 'מאיזה גיל מותר להגיע לבד?', answer: 'מתחת לגיל 14: חובה ליווי של מבוגר אחראי.\nגיל 14–18: כניסה עם אישור הורים מראש.\nמעל גיל 18: ללא מגבלה.' }
+        ];
+        for (let i = 0; i < seed.length; i++) {
+            await addDoc(collection(db, 'faq'), { ...seed[i], order: i + 1, createdAt: serverTimestamp() });
+        }
+        console.log('✅ נזרעו שאלות נפוצות ל-Firestore');
+    } catch (e) {
+        console.error('FAQ seed failed:', e);
+    }
+}
+
+// ============================================
 // Gallery Management (Firebase Storage + Firestore)
 // ============================================
 let galleryItems = [];
@@ -3116,6 +3241,7 @@ async function loadAllData() {
     await checkInitialSetup();
     await autoAddSummerOpeningNews();
     await autoAddYearRoundFacilities();
+    await autoSeedFaq();
     await Promise.all([
         loadNews(),
         loadHours(),
@@ -3126,6 +3252,7 @@ async function loadAllData() {
         loadClasses(),
         loadGallery(),
         loadElections(),
+        loadFaq(),
         loadMessages(),
         loadQuickReplies(),
         loadNotificationSettings()
@@ -3200,6 +3327,9 @@ function init() {
     // Classes section
     const addClassBtn = $('addClassBtn');
     if (addClassBtn) addClassBtn.addEventListener('click', () => showClassForm());
+
+    const addFaqBtn = $('addFaqBtn');
+    if (addFaqBtn) addFaqBtn.addEventListener('click', () => showFaqForm());
     $$('.day-tab').forEach(tab => {
         tab.addEventListener('click', () => {
             const day = parseInt(tab.getAttribute('data-day'));

@@ -776,7 +776,35 @@ function initPublicData() {
         loadPublicGallery(),
         loadPublicClasses(),
         loadPublicElections(),
-        loadPublicCommittees()
+        loadPublicCommittees(),
+        loadPublicFaq()
     ]).then(() => {
     });
+}
+
+// ============================================
+// Load FAQ - replaces faq.html accordion if data exists
+// ============================================
+async function loadPublicFaq() {
+    const wrapper = document.querySelector('.faq-wrapper');
+    if (!wrapper) return; // not the FAQ page
+    try {
+        const snap = await getDocs(collection(db, 'faq'));
+        if (snap.empty) return; // keep static markup as fallback
+        const items = snap.docs.map(d => d.data())
+            .sort((a, b) => (a.order || 0) - (b.order || 0));
+        wrapper.innerHTML = items.map(f => `
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>${escapeHtml(f.question || '')}</span>
+                    <span class="faq-icon"><i class="fas fa-plus"></i></span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">${escapeHtml(f.answer || '').replace(/\n/g, '<br>')}</div>
+                </div>
+            </div>
+        `).join('');
+    } catch (e) {
+        console.error('FAQ load failed:', e);
+    }
 }

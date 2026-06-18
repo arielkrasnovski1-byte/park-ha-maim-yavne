@@ -97,6 +97,10 @@
                     <i class="fas fa-images"></i>
                     <span>גלריית תמונות</span>
                 </a>
+                <a class="nav-item" data-section="faq">
+                    <i class="fas fa-circle-question"></i>
+                    <span>מידע שימושי</span>
+                </a>
                 <a class="nav-item" data-section="contact">
                     <i class="fas fa-address-card"></i>
                     <span>פרטי קשר</span>
@@ -328,6 +332,18 @@
                     </div>
 
                     <div class="classes-list" id="classesList"></div>
+                </section>
+
+                <!-- ================= FAQ / מידע שימושי ================= -->
+                <section class="content-section" id="section-faq">
+                    <div class="section-header-admin">
+                        <h2><i class="fas fa-circle-question"></i> מידע שימושי (שאלות נפוצות)</h2>
+                        <button class="btn-primary" id="addFaqBtn">
+                            <i class="fas fa-plus"></i>
+                            הוסף שאלה
+                        </button>
+                    </div>
+                    <div class="list" id="faqList"></div>
                 </section>
 
                 <!-- ================= BOARD ================= -->
@@ -575,6 +591,6 @@
     </div>
 
     <!-- Firebase v9 SDK + App Logic -->
-    <script type="module" src="admin.js?v=20260615e"></script>
+    <script type="module" src="admin.js?v=20260615f"></script>
 </body>
 </html>
