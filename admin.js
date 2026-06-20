@@ -1593,7 +1593,8 @@ function buildHoursEditor() {
                 ${days.map((day, i) => {
                     const dayData = (f.schedule && f.schedule[i]) || {};
                     const isClosed = !dayData.open || !dayData.close;
-                    const hasSegment2 = !!(dayData.open2 || dayData.close2);
+                    const hasSeg2 = !!(dayData.open2 || dayData.close2);
+                    const hasSeg3 = !!(dayData.open3 || dayData.close3);
                     return `
                     <div class="day-hours-row ${isClosed ? 'is-closed' : ''}">
                         <label>${day}</label>
@@ -1602,16 +1603,20 @@ function buildHoursEditor() {
                                 <input type="text" list="timeOptions15" inputmode="numeric" maxlength="5" data-facility="${fid}" data-day="${i}" data-field="open" value="${dayData.open || ''}" placeholder="פתיחה">
                                 <input type="text" list="timeOptions15" inputmode="numeric" maxlength="5" data-facility="${fid}" data-day="${i}" data-field="close" value="${dayData.close || ''}" placeholder="סגירה">
                             </div>
-                            <div class="day-segment day-segment-2" style="${hasSegment2 ? '' : 'display:none;'}">
+                            <div class="day-segment day-segment-2" style="${hasSeg2 ? '' : 'display:none;'}">
                                 <span class="segment-sep">+</span>
                                 <input type="text" list="timeOptions15" inputmode="numeric" maxlength="5" data-facility="${fid}" data-day="${i}" data-field="open2" value="${dayData.open2 || ''}" placeholder="פתיחה 2">
                                 <input type="text" list="timeOptions15" inputmode="numeric" maxlength="5" data-facility="${fid}" data-day="${i}" data-field="close2" value="${dayData.close2 || ''}" placeholder="סגירה 2">
+                                <button type="button" class="add-segment-btn remove" data-remove-seg="${fid}|${i}|2" title="הסר קטע 2"><i class="fas fa-minus"></i></button>
                             </div>
-                            <button type="button" class="add-segment-btn" data-add-segment="${fid}|${i}" title="הוסף קטע נוסף ביום (למשל בוקר + ערב)" style="${hasSegment2 ? 'display:none;' : ''}">
+                            <div class="day-segment day-segment-3" style="${hasSeg3 ? '' : 'display:none;'}">
+                                <span class="segment-sep">+</span>
+                                <input type="text" list="timeOptions15" inputmode="numeric" maxlength="5" data-facility="${fid}" data-day="${i}" data-field="open3" value="${dayData.open3 || ''}" placeholder="פתיחה 3">
+                                <input type="text" list="timeOptions15" inputmode="numeric" maxlength="5" data-facility="${fid}" data-day="${i}" data-field="close3" value="${dayData.close3 || ''}" placeholder="סגירה 3">
+                                <button type="button" class="add-segment-btn remove" data-remove-seg="${fid}|${i}|3" title="הסר קטע 3"><i class="fas fa-minus"></i></button>
+                            </div>
+                            <button type="button" class="add-segment-btn" data-add-seg="${fid}|${i}" title="הוסף קטע נוסף ביום" style="${hasSeg3 ? 'display:none;' : ''}">
                                 <i class="fas fa-plus"></i>
-                            </button>
-                            <button type="button" class="add-segment-btn remove" data-remove-segment="${fid}|${i}" title="הסר קטע 2" style="${hasSegment2 ? '' : 'display:none;'}">
-                                <i class="fas fa-minus"></i>
                             </button>
                         </div>
                         <button class="icon-btn" data-clear="${fid}|${i}" title="סגור ביום זה"><i class="fas fa-times"></i></button>
@@ -1627,38 +1632,52 @@ function buildHoursEditor() {
     editor.querySelectorAll('[data-clear]').forEach(btn => {
         btn.onclick = () => {
             const [fid, day] = btn.getAttribute('data-clear').split('|');
-            editor.querySelectorAll(`[data-facility="${fid}"][data-day="${day}"]`).forEach(inp => inp.value = '');
+            editor.querySelectorAll(`[data-facility="${fid}"][data-day="${day}"]`).forEach(inp => { inp.value = ''; delete inp.dataset.prev; });
             btn.closest('.day-hours-row').classList.add('is-closed');
         };
     });
 
-    // Add second segment for a day (split day: morning + evening)
-    editor.querySelectorAll('[data-add-segment]').forEach(btn => {
-        btn.onclick = () => {
-            const row = btn.closest('.day-hours-row');
-            row.querySelector('.day-segment-2').style.display = 'flex';
-            btn.style.display = 'none';
-            row.querySelector('[data-remove-segment]').style.display = '';
-        };
-    });
-    editor.querySelectorAll('[data-remove-segment]').forEach(btn => {
+    // Add next time segment (reveal segment 2, then segment 3)
+    editor.querySelectorAll('[data-add-seg]').forEach(btn => {
         btn.onclick = () => {
             const row = btn.closest('.day-hours-row');
             const seg2 = row.querySelector('.day-segment-2');
-            seg2.querySelectorAll('input').forEach(i => i.value = '');
-            seg2.style.display = 'none';
-            btn.style.display = 'none';
-            row.querySelector('[data-add-segment]').style.display = '';
+            const seg3 = row.querySelector('.day-segment-3');
+            if (seg2.style.display === 'none') {
+                seg2.style.display = 'flex';
+            } else if (seg3.style.display === 'none') {
+                seg3.style.display = 'flex';
+                btn.style.display = 'none';
+            }
+        };
+    });
+    // Remove a specific segment
+    editor.querySelectorAll('[data-remove-seg]').forEach(btn => {
+        btn.onclick = () => {
+            const row = btn.closest('.day-hours-row');
+            const seg = btn.closest('.day-segment');
+            seg.querySelectorAll('input').forEach(i => { i.value = ''; delete i.dataset.prev; });
+            seg.style.display = 'none';
+            const addBtn = row.querySelector('[data-add-seg]');
+            if (addBtn) addBtn.style.display = '';
         };
     });
 
-    // Re-check is-closed state when inputs change
-    editor.querySelectorAll('input[type="time"]').forEach(inp => {
+    // Time fields: keep is-closed in sync + pop the full 15-min list on click
+    editor.querySelectorAll('input[list="timeOptions15"]').forEach(inp => {
         inp.addEventListener('input', () => {
             const row = inp.closest('.day-hours-row');
             const open = row.querySelector('[data-field="open"]').value;
             const close = row.querySelector('[data-field="close"]').value;
             row.classList.toggle('is-closed', !open || !close);
+        });
+        // Clear on focus so the full options list appears; restore if nothing was picked
+        inp.addEventListener('focus', function () {
+            this.dataset.prev = this.value;
+            this.value = '';
+        });
+        inp.addEventListener('blur', function () {
+            if (!this.value && this.dataset.prev) this.value = this.dataset.prev;
         });
     });
 
@@ -1730,11 +1749,17 @@ async function saveHours() {
             const closeInput = editor.querySelector(`[data-facility="${fid}"][data-day="${i}"][data-field="close"]`);
             const open2Input = editor.querySelector(`[data-facility="${fid}"][data-day="${i}"][data-field="open2"]`);
             const close2Input = editor.querySelector(`[data-facility="${fid}"][data-day="${i}"][data-field="close2"]`);
+            const open3Input = editor.querySelector(`[data-facility="${fid}"][data-day="${i}"][data-field="open3"]`);
+            const close3Input = editor.querySelector(`[data-facility="${fid}"][data-day="${i}"][data-field="close3"]`);
             if (openInput && closeInput && openInput.value && closeInput.value) {
                 const dayEntry = { open: openInput.value, close: closeInput.value };
                 if (open2Input?.value && close2Input?.value) {
                     dayEntry.open2 = open2Input.value;
                     dayEntry.close2 = close2Input.value;
+                }
+                if (open3Input?.value && close3Input?.value) {
+                    dayEntry.open3 = open3Input.value;
+                    dayEntry.close3 = close3Input.value;
                 }
                 facilities[fid].schedule[i] = dayEntry;
             } else {

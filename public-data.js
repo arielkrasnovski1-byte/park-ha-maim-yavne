@@ -209,9 +209,12 @@ async function loadPublicHours() {
             const dayData = f.schedule[day];
             if (dayData && dayData.open && dayData.close) {
                 let html = `${dayData.open}-${dayData.close}`;
-                // Support for split day (two segments): e.g. Sunday 5:30-9:00, 14:00-22:30
+                // Support split day (up to three segments): e.g. 5:30-9:00, 14:00-19:00, 20:00-22:30
                 if (dayData.open2 && dayData.close2) {
                     html += `, ${dayData.open2}-${dayData.close2}`;
+                }
+                if (dayData.open3 && dayData.close3) {
+                    html += `, ${dayData.open3}-${dayData.close3}`;
                 }
                 cell.innerHTML = html;
             } else {
