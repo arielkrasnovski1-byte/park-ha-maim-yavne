@@ -591,7 +591,7 @@ function initFacilityStatus() {
 
                     hoursText = allHoursText;
                     progressBar = `<div class="facility-progress-track"><div class="facility-progress-bar" style="width: ${progressPercent}%"></div></div>`;
-                    remainingText = `<i class="fas fa-hourglass-half"></i> סוגר בעוד ${formatTimeRemaining(minutesUntilClose)}`;
+                    remainingText = `<i class="fas fa-hourglass-half"></i> ייסגר בעוד ${formatTimeRemaining(minutesUntilClose)}`;
                 } else if (nextSegment) {
                     // Closed now but will open again today
                     const openMin = timeToMinutes(nextSegment.open);
