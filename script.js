@@ -610,7 +610,7 @@ function initFacilityStatus() {
                     progressBar = `<div class="facility-progress-track"><div class="facility-progress-bar" style="width: 100%; background: rgba(239, 68, 68, 0.5);"></div></div>`;
                     if (nextOpen !== null) {
                         const nextHours = facility.schedule[nextOpen];
-                        remainingText = `<i class="fas fa-calendar-alt"></i> פותח ${dayShort[nextOpen]} ${nextHours.open}`;
+                        remainingText = `<i class="fas fa-calendar-alt"></i> ייפתח ביום ${dayShort[nextOpen]} ${nextHours.open}`;
                     } else {
                         remainingText = `<i class="fas fa-times"></i> סגור היום`;
                     }
@@ -624,7 +624,7 @@ function initFacilityStatus() {
                     const nextHours = facility.schedule[nextOpen];
                     hoursText = `פתוח ${dayShort[nextOpen]}-שבת`;
                     progressBar = '';
-                    remainingText = `<i class="fas fa-calendar-alt"></i> פותח ${dayShort[nextOpen]} ${nextHours.open}`;
+                    remainingText = `<i class="fas fa-calendar-alt"></i> ייפתח ביום ${dayShort[nextOpen]} ${nextHours.open}`;
                 } else {
                     hoursText = 'סגור';
                     progressBar = '';
