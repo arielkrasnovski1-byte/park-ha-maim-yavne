@@ -414,7 +414,7 @@ function initFacilityStatus() {
     // Schedule: order matches summer hours table — seasonal first, year-round last
     // Day index: 0=Sunday, 1=Monday, ..., 5=Friday, 6=Saturday
     // Split-day support: a day can have open2/close2 for a second segment (morning + evening)
-    const facilities = [
+    let facilities = [
         {
             name: 'משרד',
             icon: 'fas fa-building',
@@ -655,6 +655,15 @@ function initFacilityStatus() {
     updateStatus();
     // Update every minute
     setInterval(updateStatus, 60000);
+
+    // Allow public-data.js to feed the live hours from the panel (Firestore),
+    // so the "פעילים עכשיו" card stays in sync with the hours tables.
+    window.setFacilitiesData = function (arr) {
+        if (Array.isArray(arr) && arr.length) {
+            facilities = arr;
+            updateStatus();
+        }
+    };
 }
 
 function initAccessibility() {

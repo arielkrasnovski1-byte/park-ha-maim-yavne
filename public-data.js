@@ -170,6 +170,22 @@ async function loadPublicHours() {
             }
         }
 
+        // --- Sync the "פעילים עכשיו" status card with these hours (single source) ---
+        if (typeof window.setFacilitiesData === 'function') {
+            const cardData = Object.keys(facilities)
+                .filter(k => facilities[k].enabled !== false)
+                .sort((a, b) => (facilities[a].order || 99) - (facilities[b].order || 99))
+                .map(k => ({
+                    name: facilities[k].name,
+                    icon: 'fas fa-' + (facilities[k].icon || 'clock'),
+                    schedule: facilities[k].schedule || {},
+                    membersOnly: (k === 'indoor' || k === 'gym'),
+                    maintenanceFirstSunday: (k === 'indoor'),
+                    yearRound: !!facilities[k].yearRound
+                }));
+            window.setFacilitiesData(cardData);
+        }
+
         // Add per-facility period badges under table headers (idempotent)
         const tableHead = document.querySelector('.full-hours-table thead tr');
         if (tableHead) {
