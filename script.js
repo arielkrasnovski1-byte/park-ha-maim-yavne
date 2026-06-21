@@ -600,7 +600,7 @@ function initFacilityStatus() {
                     statusBadge = `<span class="facility-badge closed"><i class="fas fa-lock"></i> סגור</span>`;
                     hoursText = allHoursText;
                     progressBar = `<div class="facility-progress-track"><div class="facility-progress-bar" style="width: 0%"></div></div>`;
-                    remainingText = `<i class="fas fa-clock"></i> פותח בעוד ${formatTimeRemaining(minutesUntilOpen)}`;
+                    remainingText = `<i class="fas fa-clock"></i> ייפתח בעוד ${formatTimeRemaining(minutesUntilOpen)}`;
                 } else {
                     // Closed for the rest of the day
                     const nextOpen = getNextOpenDay(facility.schedule, currentDay);
