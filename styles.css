@@ -4996,7 +4996,6 @@ body.a11y-keyboard-focus *:focus {
     }
     .hours-card-row {
         display: flex;
-        flex-direction: row-reverse;
         justify-content: space-between;
         align-items: center;
         padding: 11px 16px;
