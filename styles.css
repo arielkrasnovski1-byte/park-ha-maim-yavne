@@ -4953,13 +4953,68 @@ body.a11y-keyboard-focus *:focus {
     box-shadow: 0 0 12px #f59e0b;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 900px) and (min-width: 701px) {
     .full-hours-table {
         overflow-x: auto;
     }
 
     .full-hours-table table {
         min-width: 700px;
+    }
+}
+
+/* On phones: turn each day-row into a clear card (facility: hours) */
+@media (max-width: 700px) {
+    .full-hours-table {
+        overflow: visible;
+        background: transparent;
+        box-shadow: none;
+        border-radius: 0;
+    }
+    .full-hours-table table,
+    .full-hours-table tbody,
+    .full-hours-table tr,
+    .full-hours-table td {
+        display: block;
+        width: 100%;
+    }
+    .full-hours-table table { min-width: 0; }
+    .full-hours-table thead { display: none; }
+    .full-hours-table tr {
+        background: white;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        margin-bottom: 14px;
+        overflow: hidden;
+    }
+    .full-hours-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: start;
+        padding: 11px 16px;
+        border-bottom: 1px solid var(--gray-100);
+        font-size: 15px;
+    }
+    .full-hours-table td:first-child {
+        background: linear-gradient(135deg, var(--primary-darker), var(--primary));
+        color: white;
+        justify-content: center;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 800;
+    }
+    .full-hours-table td:not(:first-child)::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: var(--ink);
+        margin-inline-end: 12px;
+    }
+    .full-hours-table td:last-child {
+        border-bottom: none;
+    }
+    .full-hours-table .time-cell {
+        font-size: 14px;
     }
 }
 

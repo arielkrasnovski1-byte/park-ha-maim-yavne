@@ -30,7 +30,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Heebo:wght@300;400;500;700;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css?v=20260624">
+    <link rel="stylesheet" href="styles.css?v=20260629">
 </head>
 <body>
     <a href="#main-content" class="skip-to-content">דלג לתוכן העיקרי</a>
@@ -467,7 +467,8 @@
                     <thead>
                         <tr>
                             <th data-he="יום" data-en="Day">יום</th>
-                            <th data-he="בריכה אמורפית + פעוטות" data-en="Amorphic Pool + Toddler">בריכה אמורפית + פעוטות</th>
+                            <th data-he="בריכה אמורפית" data-en="Amorphic Pool">בריכה אמורפית</th>
+                            <th data-he="בריכת פעוטות" data-en="Toddler Pool">בריכת פעוטות</th>
                             <th data-he="מגלשות" data-en="Slides">מגלשות</th>
                             <th data-he="משרד" data-en="Office">משרד</th>
                         </tr>
@@ -475,27 +476,31 @@
                     <tbody id="hoursTableBody">
                         <tr>
                             <td data-he="ראשון" data-en="Sunday">ראשון</td>
-                            <td class="time-cell" data-hours="amorphic-0">14:00-19:00</td>
-                            <td class="time-cell" data-hours="slides-0"><span class="closed-cell">סגור</span></td>
-                            <td class="time-cell" data-hours="office-0"><span class="closed-cell">סגור</span></td>
+                            <td class="time-cell" data-label="בריכה אמורפית" data-hours="amorphic-0">14:00-19:00</td>
+                            <td class="time-cell" data-label="בריכת פעוטות" data-hours="toddler-0">14:00-19:00</td>
+                            <td class="time-cell" data-label="מגלשות" data-hours="slides-0">16:00-19:00</td>
+                            <td class="time-cell" data-label="משרד" data-hours="office-0"><span class="closed-cell">סגור</span></td>
                         </tr>
                         <tr>
                             <td data-he="שני - חמישי" data-en="Mon - Thu">שני - חמישי</td>
-                            <td class="time-cell" data-hours="amorphic-1">12:00-19:00</td>
-                            <td class="time-cell" data-hours="slides-1"><span class="closed-cell">סגור</span></td>
-                            <td class="time-cell" data-hours="office-1"><span class="closed-cell">סגור</span></td>
+                            <td class="time-cell" data-label="בריכה אמורפית" data-hours="amorphic-1">12:00-19:00</td>
+                            <td class="time-cell" data-label="בריכת פעוטות" data-hours="toddler-1">12:00-19:00</td>
+                            <td class="time-cell" data-label="מגלשות" data-hours="slides-1">16:00-19:00</td>
+                            <td class="time-cell" data-label="משרד" data-hours="office-1"><span class="closed-cell">סגור</span></td>
                         </tr>
                         <tr>
                             <td data-he="שישי" data-en="Friday">שישי</td>
-                            <td class="time-cell" data-hours="amorphic-5">10:00-17:45</td>
-                            <td class="time-cell" data-hours="slides-5">12:00-16:45</td>
-                            <td class="time-cell" data-hours="office-5">09:00-13:00</td>
+                            <td class="time-cell" data-label="בריכה אמורפית" data-hours="amorphic-5">10:00-17:45</td>
+                            <td class="time-cell" data-label="בריכת פעוטות" data-hours="toddler-5">10:00-17:45</td>
+                            <td class="time-cell" data-label="מגלשות" data-hours="slides-5">12:00-16:45</td>
+                            <td class="time-cell" data-label="משרד" data-hours="office-5">09:00-13:00</td>
                         </tr>
                         <tr>
                             <td data-he="שבת" data-en="Saturday">שבת</td>
-                            <td class="time-cell" data-hours="amorphic-6">09:00-17:45</td>
-                            <td class="time-cell" data-hours="slides-6">10:00-16:45</td>
-                            <td class="time-cell" data-hours="office-6">09:00-14:00</td>
+                            <td class="time-cell" data-label="בריכה אמורפית" data-hours="amorphic-6">09:00-17:45</td>
+                            <td class="time-cell" data-label="בריכת פעוטות" data-hours="toddler-6">09:00-17:45</td>
+                            <td class="time-cell" data-label="מגלשות" data-hours="slides-6">10:00-16:45</td>
+                            <td class="time-cell" data-label="משרד" data-hours="office-6">09:00-14:00</td>
                         </tr>
                     </tbody>
                 </table>
@@ -522,23 +527,23 @@
                     <tbody id="hoursTableBodyYearRound">
                         <tr>
                             <td data-he="ראשון" data-en="Sunday">ראשון</td>
-                            <td class="time-cell" data-hours="indoor-0">05:30-09:00, 14:00-22:30</td>
-                            <td class="time-cell" data-hours="gym-0">05:30-09:00, 14:00-22:30</td>
+                            <td class="time-cell" data-label="בריכה מקורה" data-hours="indoor-0">05:30-09:00, 14:00-22:30</td>
+                            <td class="time-cell" data-label="חדר כושר" data-hours="gym-0">05:30-09:00, 14:00-22:30</td>
                         </tr>
                         <tr>
                             <td data-he="שני - חמישי" data-en="Mon - Thu">שני - חמישי</td>
-                            <td class="time-cell" data-hours="indoor-1">05:30-22:30</td>
-                            <td class="time-cell" data-hours="gym-1">05:30-22:30</td>
+                            <td class="time-cell" data-label="בריכה מקורה" data-hours="indoor-1">05:30-22:30</td>
+                            <td class="time-cell" data-label="חדר כושר" data-hours="gym-1">05:30-22:30</td>
                         </tr>
                         <tr>
                             <td data-he="שישי" data-en="Friday">שישי</td>
-                            <td class="time-cell" data-hours="indoor-5">05:30-19:00</td>
-                            <td class="time-cell" data-hours="gym-5">05:30-19:00</td>
+                            <td class="time-cell" data-label="בריכה מקורה" data-hours="indoor-5">05:30-19:00</td>
+                            <td class="time-cell" data-label="חדר כושר" data-hours="gym-5">05:30-19:00</td>
                         </tr>
                         <tr>
                             <td data-he="שבת" data-en="Saturday">שבת</td>
-                            <td class="time-cell" data-hours="indoor-6">07:30-19:00</td>
-                            <td class="time-cell" data-hours="gym-6">07:30-19:00</td>
+                            <td class="time-cell" data-label="בריכה מקורה" data-hours="indoor-6">07:30-19:00</td>
+                            <td class="time-cell" data-label="חדר כושר" data-hours="gym-6">07:30-19:00</td>
                         </tr>
                     </tbody>
                 </table>
@@ -813,6 +818,6 @@
     </button>
 
     <script src="script.js?v=20260628"></script>
-    <script type="module" src="public-data.js?v=20260628"></script>
+    <script type="module" src="public-data.js?v=20260629"></script>
 </body>
 </html>

@@ -190,7 +190,7 @@ async function loadPublicHours() {
         const tableHead = document.querySelector('.full-hours-table thead tr');
         if (tableHead) {
             // Try to map column index → facility id: column 1 = amorphic, column 2 = slides, column 3 = office
-            const facilityByCol = { 1: 'amorphic', 2: 'slides', 3: 'office' };
+            const facilityByCol = { 1: 'amorphic', 2: 'toddler', 3: 'slides', 4: 'office' };
             tableHead.querySelectorAll('th').forEach((th, colIdx) => {
                 const fid = facilityByCol[colIdx];
                 // remove old badge first
