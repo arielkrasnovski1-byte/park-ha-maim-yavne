@@ -238,6 +238,11 @@ async function loadPublicHours() {
             }
         });
 
+        // Rebuild the mobile per-facility cards now that cells hold live data
+        if (typeof window.buildMobileHours === 'function') {
+            window.buildMobileHours();
+        }
+
     } catch (e) {
         console.error('Failed to load hours:', e);
     }

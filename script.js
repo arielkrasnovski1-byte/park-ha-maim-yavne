@@ -405,7 +405,54 @@ document.addEventListener('DOMContentLoaded', function () {
     // Live Facility Status (Summer 2026)
     // ============================================
     initFacilityStatus();
+
+    // Build the mobile per-facility hours cards from the tables
+    buildMobileHours();
 });
+
+// ============================================
+// Mobile hours: turn each wide table into one card PER FACILITY
+// (each card shows that facility's whole week). Rebuilt by public-data.js
+// after Firestore fills the cells, so it always matches the panel.
+// ============================================
+function buildMobileHours() {
+    document.querySelectorAll('.full-hours-table').forEach(function (wrap) {
+        const table = wrap.querySelector('table');
+        if (!table) return;
+        const headers = Array.from(table.querySelectorAll('thead th'));
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        if (headers.length < 2 || !rows.length) return;
+
+        const facilities = headers.slice(1).map(function (th) { return th.textContent.trim(); });
+        const days = rows.map(function (r) {
+            const c = r.querySelector('td');
+            return c ? c.textContent.trim() : '';
+        });
+
+        const old = wrap.querySelector('.hours-cards');
+        if (old) old.remove();
+
+        const container = document.createElement('div');
+        container.className = 'hours-cards';
+
+        facilities.forEach(function (fac, fi) {
+            const card = document.createElement('div');
+            card.className = 'hours-card';
+            let rowsHtml = '';
+            rows.forEach(function (r, ri) {
+                const cell = r.children[fi + 1];
+                const timeHtml = cell ? cell.innerHTML : '';
+                rowsHtml += '<div class="hours-card-row"><span class="hcr-day">' + days[ri] +
+                    '</span><span class="hcr-time">' + timeHtml + '</span></div>';
+            });
+            card.innerHTML = '<div class="hours-card-head">' + fac + '</div>' + rowsHtml;
+            container.appendChild(card);
+        });
+
+        wrap.appendChild(container);
+    });
+}
+window.buildMobileHours = buildMobileHours;
 
 function initFacilityStatus() {
     const facilitiesContainer = document.getElementById('facilitiesStatus');
