@@ -1359,6 +1359,10 @@ function showNewsForm(existing = null) {
         </div>
         <div class="form-group">
             <label>תוכן ההודעה</label>
+            <div style="margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <button type="button" id="newsBoldBtn" class="btn-secondary" style="padding:6px 12px;font-size:13px;"><i class="fas fa-bold"></i> הדגשה</button>
+                <span style="color:#64748b;font-size:12px;">סמן מילים ולחץ "הדגשה" — או עטוף אותן ב‑**כוכביות**. ההדגשה תופיע בבולד באתר.</span>
+            </div>
             <textarea id="newsContent" rows="6" placeholder="כתוב כאן את תוכן ההודעה...">${escapeHtml(existing?.content || '')}</textarea>
         </div>
 
@@ -1458,7 +1462,24 @@ function showNewsForm(existing = null) {
                 textInput.focus();
             }
         });
+
+        // Bold button: wrap the selected text in ** ** (rendered as <strong> on the site)
+        const boldBtn = document.getElementById('newsBoldBtn');
+        const contentTa = document.getElementById('newsContent');
+        boldBtn?.addEventListener('click', () => wrapTextareaSelection(contentTa, '**', '**'));
     }, 50);
+}
+
+// Wrap the current selection of a textarea with before/after markers
+function wrapTextareaSelection(ta, before, after) {
+    if (!ta) return;
+    const start = ta.selectionStart || 0;
+    const end = ta.selectionEnd || 0;
+    const sel = ta.value.slice(start, end) || 'טקסט';
+    ta.value = ta.value.slice(0, start) + before + sel + after + ta.value.slice(end);
+    ta.focus();
+    ta.selectionStart = start + before.length;
+    ta.selectionEnd = start + before.length + sel.length;
 }
 
 async function editNews(id) {

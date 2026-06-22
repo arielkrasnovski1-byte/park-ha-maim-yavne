@@ -56,6 +56,14 @@ function setAll(selector, value) {
     });
 }
 
+// Safe rich text: escape everything, then turn **bold** into <strong> and
+// newlines into <br>. Lets the panel bold words without allowing raw HTML.
+function richText(str) {
+    return escapeHtml(str)
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+}
+
 // ============================================
 // Load News (Notice Board)
 // ============================================
@@ -111,7 +119,7 @@ async function loadPublicNews() {
                         <span>${formatDate(item.date)}</span>
                     </div>
                     <h3>${escapeHtml(item.title)}</h3>
-                    <p>${escapeHtml(item.content)}</p>
+                    <p>${richText(item.content)}</p>
                     ${ctaHtml}
                 </article>
             `;

@@ -3330,6 +3330,7 @@ body.a11y-keyboard-focus *:focus {
     display: grid;
     grid-template-columns: 1.4fr 1fr 1fr;
     gap: 24px;
+    align-items: start; /* each card only as tall as its content (no over-stretch) */
 }
 
 .news-card {
