@@ -101,6 +101,10 @@
                     <i class="fas fa-circle-question"></i>
                     <span>מידע שימושי</span>
                 </a>
+                <a class="nav-item" data-section="holidays">
+                    <i class="fas fa-calendar-day"></i>
+                    <span>חגים וסגירות</span>
+                </a>
                 <a class="nav-item" data-section="contact">
                     <i class="fas fa-address-card"></i>
                     <span>פרטי קשר</span>
@@ -385,6 +389,19 @@
                     <div class="list" id="faqList"></div>
                 </section>
 
+                <!-- ================= HOLIDAYS / חגים ================= -->
+                <section class="content-section" id="section-holidays">
+                    <div class="section-header-admin">
+                        <h2><i class="fas fa-calendar-day"></i> חגים וסגירות</h2>
+                        <button class="btn-primary" id="addHolidayBtn">
+                            <i class="fas fa-plus"></i>
+                            הוסף חג
+                        </button>
+                    </div>
+                    <p style="color:#64748b;margin-bottom:16px;font-size:14px;">בתאריכי החג האתר יציג אוטומטית באנר בראש הדף ומצב מיוחד בכרטיס "פעילים עכשיו" (סגור או שעות מיוחדות). אין צורך לפרסם מחדש — זה משתנה מיד.</p>
+                    <div class="list" id="holidaysList"></div>
+                </section>
+
                 <!-- ================= BOARD ================= -->
                 <section class="content-section" id="section-board">
                     <!-- CEO Display Card (Management) -->
@@ -630,6 +647,6 @@
     </div>
 
     <!-- Firebase v9 SDK + App Logic -->
-    <script type="module" src="admin.js?v=20260615j"></script>
+    <script type="module" src="admin.js?v=20260615k"></script>
 </body>
 </html>

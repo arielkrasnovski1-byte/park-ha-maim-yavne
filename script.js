@@ -458,6 +458,36 @@ function initFacilityStatus() {
     const facilitiesContainer = document.getElementById('facilitiesStatus');
     if (!facilitiesContainer) return;
 
+    // Holidays fed from the panel (Firestore) via public-data.js
+    let holidays = [];
+    function escHtml(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function todayISO() {
+        const d = new Date();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${d.getFullYear()}-${m}-${day}`;
+    }
+    function getActiveHoliday() {
+        const t = todayISO();
+        return holidays.find(h => h.startDate && h.endDate && h.startDate <= t && t <= h.endDate) || null;
+    }
+    function renderHolidayCard(h) {
+        const special = h.type === 'special';
+        const icon = special ? 'fa-clock' : 'fa-lock';
+        const sub = special
+            ? `שעות מיוחדות${h.specialHours ? ': ' + escHtml(h.specialHours) : ''}`
+            : 'הפארק סגור';
+        return `<div class="facility-item facility-holiday${special ? ' special' : ''}">
+            <div class="holiday-card-title"><i class="fas ${icon}"></i> ${escHtml(h.name)}</div>
+            <div class="holiday-card-sub">${sub}</div>
+            ${h.note ? `<div class="holiday-card-note">${escHtml(h.note)}</div>` : ''}
+        </div>`;
+    }
+
     // Schedule: order matches summer hours table — seasonal first, year-round last
     // Day index: 0=Sunday, 1=Monday, ..., 5=Friday, 6=Saturday
     // Split-day support: a day can have open2/close2 for a second segment (morning + evening)
@@ -576,6 +606,13 @@ function initFacilityStatus() {
         const timeHeader = document.getElementById('currentDayTime');
         if (timeHeader) {
             timeHeader.textContent = `יום ${dayNames[currentDay]} • ${dateStr} • ${timeStr}`;
+        }
+
+        // Holiday override: if today falls within a holiday, show that instead
+        const holiday = getActiveHoliday();
+        if (holiday) {
+            facilitiesContainer.innerHTML = renderHolidayCard(holiday);
+            return;
         }
 
         // Build facilities
@@ -710,6 +747,12 @@ function initFacilityStatus() {
             facilities = arr;
             updateStatus();
         }
+    };
+
+    // Receive holidays from the panel (Firestore) and refresh the card
+    window.setHolidaysData = function (arr) {
+        holidays = Array.isArray(arr) ? arr : [];
+        updateStatus();
     };
 }
 

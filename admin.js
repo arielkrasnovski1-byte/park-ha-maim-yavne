@@ -273,6 +273,7 @@ function navigateTo(section) {
         elections: { icon: 'vote-yea', text: 'תוצאות בחירות' },
         gallery: { icon: 'images', text: 'גלריה' },
         faq: { icon: 'circle-question', text: 'מידע שימושי' },
+        holidays: { icon: 'calendar-day', text: 'חגים וסגירות' },
         contact: { icon: 'address-card', text: 'פרטי קשר' },
         settings: { icon: 'cog', text: 'הגדרות' }
     };
@@ -2535,6 +2536,146 @@ async function deleteFaq(id) {
     showToast('השאלה נמחקה');
 }
 
+// ============================================
+// Holidays / חגים וסגירות
+// ============================================
+async function loadHolidays() {
+    if (DEMO_MODE || !isInitialized) return;
+    const list = $('holidaysList');
+    if (!list) return;
+    try {
+        const snap = await getDocs(collection(db, 'holidays'));
+        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+            .sort((a, b) => (a.startDate || '').localeCompare(b.startDate || ''));
+        if (items.length === 0) {
+            list.innerHTML = `<div class="empty-state"><i class="fas fa-calendar-day"></i><p>אין חגים מוגדרים. לחץ "הוסף חג" כדי להוסיף.</p></div>`;
+            return;
+        }
+        const todayISO = new Date().toISOString().slice(0, 10);
+        list.innerHTML = items.map(h => {
+            const range = h.startDate === h.endDate ? isoToDMY(h.startDate) : `${isoToDMY(h.startDate)} – ${isoToDMY(h.endDate)}`;
+            const isActive = h.startDate && h.endDate && h.startDate <= todayISO && todayISO <= h.endDate;
+            const isPast = h.endDate && h.endDate < todayISO;
+            const typeLabel = h.type === 'special' ? `שעות מיוחדות${h.specialHours ? ': ' + escapeHtml(h.specialHours) : ''}` : 'סגור לגמרי';
+            const tag = isActive ? `<span style="color:#16a34a;font-weight:700;">● פעיל היום</span> · ` : (isPast ? `<span style="color:#94a3b8;">עבר · </span>` : '');
+            return `
+            <div class="list-item"${isPast ? ' style="opacity:.6;"' : ''}>
+                <div class="list-item-content">
+                    <div class="list-item-title">${escapeHtml(h.name || '')}</div>
+                    <div class="list-item-meta">${tag}${range} · ${typeLabel}${h.note ? ' · ' + escapeHtml(h.note) : ''}</div>
+                </div>
+                <div class="list-item-actions">
+                    <button class="icon-btn" data-holiday-edit="${h.id}" title="ערוך"><i class="fas fa-edit"></i></button>
+                    <button class="icon-btn danger" data-holiday-delete="${h.id}" title="מחק"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>`;
+        }).join('');
+        list.querySelectorAll('[data-holiday-edit]').forEach(btn => {
+            btn.onclick = () => editHoliday(btn.getAttribute('data-holiday-edit'));
+        });
+        list.querySelectorAll('[data-holiday-delete]').forEach(btn => {
+            btn.onclick = () => deleteHoliday(btn.getAttribute('data-holiday-delete'));
+        });
+    } catch (e) {
+        console.error('Failed to load holidays:', e);
+    }
+}
+
+function showHolidayForm(existing = null) {
+    const isSpecial = existing?.type === 'special';
+    const html = `
+        <div class="modal-header">
+            <h3>${existing ? 'עריכת חג' : 'חג חדש'}</h3>
+            <button class="modal-close" data-modal-close>×</button>
+        </div>
+        <div class="form-group">
+            <label>שם החג / האירוע</label>
+            <input type="text" id="holidayName" value="${escapeHtml(existing?.name || '')}" placeholder="לדוגמה: ראש השנה">
+        </div>
+        <div class="form-row" style="display:flex;gap:12px;">
+            <div class="form-group" style="flex:1;">
+                <label>מתאריך</label>
+                <input type="date" id="holidayStart" value="${existing?.startDate || ''}">
+            </div>
+            <div class="form-group" style="flex:1;">
+                <label>עד תאריך</label>
+                <input type="date" id="holidayEnd" value="${existing?.endDate || ''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>מה קורה בחג?</label>
+            <select id="holidayType">
+                <option value="closed"${!isSpecial ? ' selected' : ''}>סגור לגמרי</option>
+                <option value="special"${isSpecial ? ' selected' : ''}>שעות מיוחדות</option>
+            </select>
+        </div>
+        <div class="form-group" id="holidayHoursGroup" style="${isSpecial ? '' : 'display:none;'}">
+            <label>שעות מיוחדות (טקסט חופשי)</label>
+            <input type="text" id="holidaySpecialHours" value="${escapeHtml(existing?.specialHours || '')}" placeholder="לדוגמה: 08:00–14:00">
+        </div>
+        <div class="form-group">
+            <label>הערה (לא חובה)</label>
+            <input type="text" id="holidayNote" value="${escapeHtml(existing?.note || '')}" placeholder="לדוגמה: חזרה לפעילות רגילה למחרת">
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" data-modal-close>ביטול</button>
+            <button class="btn-primary" data-modal-save><i class="fas fa-save"></i> שמירה</button>
+        </div>
+    `;
+    showModal(html, async (modal) => {
+        const type = modal.querySelector('#holidayType').value;
+        const data = {
+            name: modal.querySelector('#holidayName').value.trim(),
+            startDate: modal.querySelector('#holidayStart').value,
+            endDate: modal.querySelector('#holidayEnd').value,
+            type: type,
+            specialHours: type === 'special' ? modal.querySelector('#holidaySpecialHours').value.trim() : '',
+            note: modal.querySelector('#holidayNote').value.trim()
+        };
+        if (!data.name || !data.startDate) {
+            showToast('שם ותאריך התחלה הם שדות חובה', 'error');
+            return;
+        }
+        if (!data.endDate) data.endDate = data.startDate;
+        if (data.endDate < data.startDate) {
+            showToast('תאריך הסיום מוקדם מתאריך ההתחלה', 'error');
+            return;
+        }
+        try {
+            if (existing) {
+                await updateDoc(doc(db, 'holidays', existing.id), data);
+            } else {
+                await addDoc(collection(db, 'holidays'), { ...data, createdAt: serverTimestamp() });
+            }
+            closeModal();
+            await loadHolidays();
+            showToast(existing ? 'החג עודכן' : 'החג נוסף!');
+        } catch (e) {
+            showToast('שגיאה בשמירה: ' + e.message, 'error');
+        }
+    });
+    // Toggle the special-hours field based on the type selector
+    const typeSel = document.querySelector('#holidayType');
+    const hoursGroup = document.querySelector('#holidayHoursGroup');
+    if (typeSel && hoursGroup) {
+        typeSel.onchange = () => {
+            hoursGroup.style.display = typeSel.value === 'special' ? '' : 'none';
+        };
+    }
+}
+
+async function editHoliday(id) {
+    const snap = await getDoc(doc(db, 'holidays', id));
+    if (snap.exists()) showHolidayForm({ id, ...snap.data() });
+}
+
+async function deleteHoliday(id) {
+    if (!confirm('האם למחוק את החג?')) return;
+    await deleteDoc(doc(db, 'holidays', id));
+    await loadHolidays();
+    showToast('החג נמחק');
+}
+
 // Seed the current static FAQ into Firestore on first run (so it's editable)
 async function autoSeedFaq() {
     if (DEMO_MODE || !isInitialized) return;
@@ -3312,6 +3453,7 @@ async function loadAllData() {
         loadGallery(),
         loadElections(),
         loadFaq(),
+        loadHolidays(),
         loadMessages(),
         loadQuickReplies(),
         loadNotificationSettings()
@@ -3389,6 +3531,9 @@ function init() {
 
     const addFaqBtn = $('addFaqBtn');
     if (addFaqBtn) addFaqBtn.addEventListener('click', () => showFaqForm());
+
+    const addHolidayBtn = $('addHolidayBtn');
+    if (addHolidayBtn) addHolidayBtn.addEventListener('click', () => showHolidayForm());
     $$('.day-tab').forEach(tab => {
         tab.addEventListener('click', () => {
             const day = parseInt(tab.getAttribute('data-day'));

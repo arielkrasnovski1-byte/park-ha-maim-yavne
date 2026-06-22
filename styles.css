@@ -6853,3 +6853,58 @@ body.a11y-keyboard-focus *:focus {
     margin-inline-end: 7px;
     color: #f59e0b;
 }
+
+/* ============================================
+   Holidays — top banner + live-status card state
+   ============================================ */
+.holiday-banner {
+    background: linear-gradient(135deg, #b91c1c, #ef4444);
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 11px 16px;
+    text-align: center;
+}
+.holiday-banner.special {
+    background: linear-gradient(135deg, #b45309, #f59e0b);
+}
+.holiday-banner .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    flex-wrap: wrap;
+}
+.holiday-banner i { opacity: 0.9; }
+.holiday-banner strong { font-weight: 800; }
+
+/* Holiday state inside the "פעילים עכשיו" card */
+.facility-holiday {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    background: rgba(239, 68, 68, 0.16);
+    border: 1px solid rgba(239, 68, 68, 0.45);
+    border-radius: 14px;
+    padding: 16px 18px;
+}
+.facility-holiday.special {
+    background: rgba(245, 158, 11, 0.18);
+    border-color: rgba(245, 158, 11, 0.5);
+}
+.holiday-card-title {
+    font-weight: 800;
+    font-size: 17px;
+    color: #fff;
+}
+.holiday-card-title i { margin-inline-end: 7px; }
+.holiday-card-sub {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 15px;
+}
+.holiday-card-note {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.78);
+}

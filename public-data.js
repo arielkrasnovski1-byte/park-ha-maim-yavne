@@ -824,9 +824,56 @@ function initPublicData() {
         loadPublicClasses(),
         loadPublicElections(),
         loadPublicCommittees(),
-        loadPublicFaq()
+        loadPublicFaq(),
+        loadPublicHolidays()
     ]).then(() => {
     });
+}
+
+// ============================================
+// Holidays - feeds the live-status card + shows a banner
+// ============================================
+function localISODate(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+}
+
+async function loadPublicHolidays() {
+    try {
+        const snap = await getDocs(collection(db, 'holidays'));
+        const all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        // Feed the "פעילים עכשיו" card (script.js) so it can show a holiday state
+        if (typeof window.setHolidaysData === 'function') {
+            window.setHolidaysData(all);
+        }
+        renderHolidayBanner(all);
+    } catch (e) {
+        console.error('Holidays load failed:', e);
+    }
+}
+
+function renderHolidayBanner(all) {
+    const existing = document.querySelector('.holiday-banner');
+    if (existing) existing.remove();
+
+    const today = localISODate(new Date());
+    const active = (all || []).find(h => h.startDate && h.endDate && h.startDate <= today && today <= h.endDate);
+    if (!active) return;
+
+    const header = document.querySelector('.header');
+    if (!header) return;
+
+    const special = active.type === 'special';
+    const msg = special
+        ? `<strong>${escapeHtml(active.name)}</strong> — שעות מיוחדות${active.specialHours ? ': ' + escapeHtml(active.specialHours) : ''}`
+        : `<strong>${escapeHtml(active.name)}</strong> — הפארק סגור`;
+
+    const banner = document.createElement('div');
+    banner.className = 'holiday-banner' + (special ? ' special' : '');
+    banner.innerHTML = `<div class="container"><i class="fas fa-calendar-day"></i> ${msg}${active.note ? ' · ' + escapeHtml(active.note) : ''}</div>`;
+    header.insertAdjacentElement('afterend', banner);
 }
 
 // ============================================
