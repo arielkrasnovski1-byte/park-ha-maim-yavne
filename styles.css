@@ -4588,6 +4588,33 @@ body.a11y-keyboard-focus *:focus {
     color: var(--primary);
 }
 
+/* Entry-prices legend: heading above each detail, shown as cards side by side */
+.entry-legend ul {
+    gap: 16px;
+    align-items: stretch;
+    direction: ltr; /* columns flow left->right: "מחירי כניסה" first (leftmost) */
+}
+.entry-legend li {
+    direction: rtl; /* keep the Hebrew text inside each card right-to-left */
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    background: white;
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    line-height: 1.6;
+}
+.entry-legend .legend-title {
+    color: var(--primary-darker);
+    font-size: 16px;
+    font-weight: 800;
+}
+.entry-legend .legend-title i {
+    color: var(--primary);
+    margin-inline-end: 6px;
+}
+
 @media (max-width: 700px) {
     .classes-table {
         display: block;
