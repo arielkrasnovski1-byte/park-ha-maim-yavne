@@ -6806,3 +6806,23 @@ body.a11y-keyboard-focus *:focus {
     .news-card.has-image:hover .news-card-play-overlay { font-size: 50px; }
     .news-card.has-image h3 { font-size: 19px; }
 }
+
+/* ============================================
+   Members-only highlight (attractions: indoor pool, spa, gym)
+   ============================================ */
+.members-only {
+    display: inline-block;
+    margin-top: 12px;
+    background: #fff4e5;
+    color: #92400e;
+    font-weight: 800;
+    padding: 9px 16px;
+    border-radius: 12px;
+    border: 1.5px solid #f59e0b;
+    line-height: 1.55;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.12);
+}
+.members-only i {
+    margin-inline-end: 7px;
+    color: #f59e0b;
+}
