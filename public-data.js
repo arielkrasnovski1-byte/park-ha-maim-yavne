@@ -212,12 +212,6 @@ async function loadPublicHours() {
                     badge.innerHTML = `<i class="fas fa-calendar-alt"></i> ${escapeHtml(f.period.start || '')} - ${escapeHtml(f.period.end || '')}`;
                     th.appendChild(badge);
                 }
-                if (f.enabled === false) {
-                    const badge = document.createElement('div');
-                    badge.className = 'facility-closed-badge';
-                    badge.innerHTML = `<i class="fas fa-times-circle"></i> סגור עונתית`;
-                    th.appendChild(badge);
-                }
             });
         }
 
@@ -243,6 +237,21 @@ async function loadPublicHours() {
                 cell.innerHTML = html;
             } else {
                 cell.innerHTML = `<span class="closed-cell">סגור</span>`;
+            }
+        });
+
+        // Facilities turned off in the panel (enabled:false) are removed from the
+        // opening-hours table entirely — no "סגור" column is shown for them.
+        Object.keys(facilities).forEach(fid => {
+            if (!facilities[fid] || facilities[fid].enabled === false) {
+                document.querySelectorAll('.full-hours-table table').forEach(table => {
+                    const cells = table.querySelectorAll(`td[data-hours^="${fid}-"]`);
+                    if (!cells.length) return;
+                    const idx = cells[0].cellIndex;
+                    const headRow = table.querySelector('thead tr');
+                    if (headRow && headRow.children[idx]) headRow.children[idx].remove();
+                    cells.forEach(c => c.remove());
+                });
             }
         });
 
