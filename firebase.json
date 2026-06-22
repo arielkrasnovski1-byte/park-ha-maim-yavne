@@ -3,6 +3,10 @@
     "public": ".",
     "cleanUrls": true,
     "trailingSlash": false,
+    "redirects": [
+      { "source": "/index.php", "destination": "/", "type": 301 },
+      { "source": "/index.php/**", "destination": "/", "type": 301 }
+    ],
     "ignore": [
       "firebase.json",
       ".firebaserc",
