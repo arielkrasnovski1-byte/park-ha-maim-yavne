@@ -2763,7 +2763,11 @@ function populateUploadCategorySelect() {
     if (!sel) return;
     const prev = sel.value;
     sel.innerHTML = galleryCategories.map(c => `<option value="${c.value}">${escapeHtml(c.label)}</option>`).join('');
-    if (prev && galleryCategories.some(c => c.value === prev)) sel.value = prev;
+    if (prev && galleryCategories.some(c => c.value === prev)) {
+        sel.value = prev; // keep the admin's current choice across refreshes
+    } else if (galleryCategories.some(c => c.value === 'user')) {
+        sel.value = 'user'; // default to the catch-all "אחר" so uploads don't silently land in the first category
+    }
 }
 
 // ---- Gallery categories manager (add / rename / reorder / delete) ----
