@@ -457,11 +457,17 @@
                 <section class="content-section" id="section-gallery">
                     <div class="section-header-admin">
                         <h2><i class="fas fa-images"></i> גלריית תמונות</h2>
-                        <label for="uploadInput" class="btn-primary">
-                            <i class="fas fa-upload"></i>
-                            העלה תמונות
-                        </label>
-                        <input type="file" id="uploadInput" multiple accept="image/*" style="display:none;">
+                        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                            <button class="btn-secondary" id="manageGalleryCatsBtn"><i class="fas fa-tags"></i> נהל קטגוריות</button>
+                            <label style="font-weight:600; display:flex; align-items:center; gap:6px;">העלה לקטגוריה:
+                                <select id="uploadCategory" style="padding:6px 10px; border-radius:8px;"></select>
+                            </label>
+                            <label for="uploadInput" class="btn-primary">
+                                <i class="fas fa-upload"></i>
+                                העלה תמונות
+                            </label>
+                            <input type="file" id="uploadInput" multiple accept="image/*" style="display:none;">
+                        </div>
                     </div>
 
                     <div class="upload-zone" id="uploadZone">
@@ -647,6 +653,6 @@
     </div>
 
     <!-- Firebase v9 SDK + App Logic -->
-    <script type="module" src="admin.js?v=20260615m"></script>
+    <script type="module" src="admin.js?v=20260615n"></script>
 </body>
 </html>

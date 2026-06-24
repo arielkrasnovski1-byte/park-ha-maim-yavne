@@ -2729,21 +2729,119 @@ async function autoSeedFaq() {
 let galleryItems = [];
 let galleryFilter = 'all';
 
-const GALLERY_CATEGORIES = [
-    { value: 'aerial', label: 'מבט אווירי' },
-    { value: 'pools', label: 'בריכות' },
-    { value: 'slides', label: 'מגלשות' },
-    { value: 'kids', label: 'ילדים' },
-    { value: 'gym', label: 'חדר כושר' },
-    { value: 'spa', label: 'ספא' },
-    { value: 'facilities', label: 'מתקנים' },
-    { value: 'user', label: 'אחר' }
+// Editable from the panel; persisted in settings/galleryCats (these are the defaults/seed)
+let galleryCategories = [
+    { value: 'aerial', label: 'מבט אווירי', order: 1 },
+    { value: 'pools', label: 'בריכות', order: 2 },
+    { value: 'slides', label: 'מגלשות', order: 3 },
+    { value: 'kids', label: 'ילדים', order: 4 },
+    { value: 'gym', label: 'חדר כושר', order: 5 },
+    { value: 'spa', label: 'ספא', order: 6 },
+    { value: 'facilities', label: 'מתקנים', order: 7 },
+    { value: 'user', label: 'אחר', order: 8 }
 ];
+
+async function loadGalleryCategories() {
+    if (DEMO_MODE || !isInitialized) return;
+    try {
+        const snap = await getDoc(doc(db, 'settings', 'galleryCats'));
+        if (snap.exists() && Array.isArray(snap.data().list) && snap.data().list.length) {
+            galleryCategories = snap.data().list.slice().sort((a, b) => (a.order || 0) - (b.order || 0));
+        } else {
+            // First run: seed Firestore with the defaults
+            await setDoc(doc(db, 'settings', 'galleryCats'), { list: galleryCategories });
+        }
+    } catch (e) {
+        console.error('Gallery categories load failed:', e);
+    }
+    populateUploadCategorySelect();
+}
+
+// Fill the "upload to category" dropdown in the gallery section
+function populateUploadCategorySelect() {
+    const sel = $('uploadCategory');
+    if (!sel) return;
+    const prev = sel.value;
+    sel.innerHTML = galleryCategories.map(c => `<option value="${c.value}">${escapeHtml(c.label)}</option>`).join('');
+    if (prev && galleryCategories.some(c => c.value === prev)) sel.value = prev;
+}
+
+// ---- Gallery categories manager (add / rename / reorder / delete) ----
+function showGalleryCategoriesForm() {
+    // Work on a copy so "ביטול" discards changes
+    let working = galleryCategories.map(c => ({ value: c.value, label: c.label }));
+
+    function render() {
+        const body = document.getElementById('galCatRows');
+        if (!body) return;
+        body.innerHTML = working.map((c, i) => `
+            <div class="form-row" style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+                <div style="display:flex; flex-direction:column;">
+                    <button type="button" class="icon-btn" data-cat-up="${i}" ${i === 0 ? 'disabled' : ''} title="למעלה"><i class="fas fa-chevron-up"></i></button>
+                    <button type="button" class="icon-btn" data-cat-down="${i}" ${i === working.length - 1 ? 'disabled' : ''} title="למטה"><i class="fas fa-chevron-down"></i></button>
+                </div>
+                <input type="text" data-cat-label="${i}" value="${escapeHtml(c.label)}" placeholder="שם הקטגוריה" style="flex:1;">
+                <button type="button" class="icon-btn danger" data-cat-del="${i}" title="מחק"><i class="fas fa-trash"></i></button>
+            </div>
+        `).join('');
+
+        body.querySelectorAll('[data-cat-label]').forEach(inp => {
+            inp.oninput = () => { working[+inp.getAttribute('data-cat-label')].label = inp.value; };
+        });
+        body.querySelectorAll('[data-cat-del]').forEach(btn => {
+            btn.onclick = () => { working.splice(+btn.getAttribute('data-cat-del'), 1); render(); };
+        });
+        body.querySelectorAll('[data-cat-up]').forEach(btn => {
+            btn.onclick = () => { const i = +btn.getAttribute('data-cat-up'); [working[i - 1], working[i]] = [working[i], working[i - 1]]; render(); };
+        });
+        body.querySelectorAll('[data-cat-down]').forEach(btn => {
+            btn.onclick = () => { const i = +btn.getAttribute('data-cat-down'); [working[i + 1], working[i]] = [working[i], working[i + 1]]; render(); };
+        });
+    }
+
+    const html = `
+        <div class="modal-header">
+            <h3>ניהול קטגוריות גלריה</h3>
+            <button class="modal-close" data-modal-close>×</button>
+        </div>
+        <p style="color:#64748b; font-size:13px; margin-bottom:14px;">הקטגוריות שיש בהן תמונות יופיעו ככפתורי סינון באתר. מחיקת קטגוריה לא מוחקת את התמונות — הן פשוט לא יוצגו תחת סינון עד שתשייך אותן לקטגוריה אחרת.</p>
+        <div id="galCatRows"></div>
+        <button type="button" class="btn-secondary" id="galCatAdd" style="margin-top:6px;"><i class="fas fa-plus"></i> הוסף קטגוריה</button>
+        <div class="modal-footer">
+            <button class="btn-secondary" data-modal-close>ביטול</button>
+            <button class="btn-primary" data-modal-save><i class="fas fa-save"></i> שמירה</button>
+        </div>
+    `;
+    showModal(html, async () => {
+        const finalList = [];
+        working.forEach((c, i) => {
+            const label = (c.label || '').trim();
+            if (!label) return;
+            finalList.push({ value: c.value || ('c' + Date.now() + i), label, order: i + 1 });
+        });
+        if (!finalList.length) { showToast('צריך לפחות קטגוריה אחת', 'error'); return; }
+        try {
+            await setDoc(doc(db, 'settings', 'galleryCats'), { list: finalList });
+            galleryCategories = finalList;
+            closeModal();
+            populateUploadCategorySelect();
+            await loadGallery();
+            showToast('הקטגוריות נשמרו');
+        } catch (e) {
+            showToast('שגיאה בשמירה: ' + e.message, 'error');
+        }
+    });
+    render();
+    const addBtn = document.getElementById('galCatAdd');
+    if (addBtn) addBtn.onclick = () => { working.push({ value: '', label: '' }); render(); };
+}
 
 async function loadGallery() {
     if (DEMO_MODE || !isInitialized) return;
     const grid = $('galleryAdminGrid');
     if (!grid) return;
+
+    await loadGalleryCategories();
 
     try {
         const snap = await getDocs(collection(db, 'gallery'));
@@ -2766,7 +2864,7 @@ function renderGalleryFilters() {
     galleryItems.forEach(it => {
         counts[it.category] = (counts[it.category] || 0) + 1;
     });
-    bar.innerHTML = [{ value: 'all', label: 'הכל' }, ...GALLERY_CATEGORIES].map(c => `
+    bar.innerHTML = [{ value: 'all', label: 'הכל' }, ...galleryCategories].map(c => `
         <button class="gallery-filter-btn ${galleryFilter === c.value ? 'active' : ''}" data-gfilter="${c.value}">
             ${escapeHtml(c.label)} <span class="filter-count">${counts[c.value] || 0}</span>
         </button>
@@ -2797,7 +2895,7 @@ function renderGalleryGrid() {
         <div class="gallery-admin-item">
             <img src="${escapeHtml(img.url)}" alt="${escapeHtml(img.caption || '')}" loading="lazy">
             <div class="gallery-admin-caption">${escapeHtml(img.caption || 'ללא כותרת')}</div>
-            <div class="gallery-admin-cat-badge">${escapeHtml(GALLERY_CATEGORIES.find(c => c.value === img.category)?.label || '—')}</div>
+            <div class="gallery-admin-cat-badge">${escapeHtml(galleryCategories.find(c => c.value === img.category)?.label || '—')}</div>
             <div class="gallery-admin-overlay">
                 <button class="icon-btn" data-gallery-up="${img.id}" title="העלה ימינה" ${idx === 0 ? 'disabled' : ''}><i class="fas fa-arrow-right"></i></button>
                 <button class="icon-btn" data-gallery-down="${img.id}" title="הזז שמאלה" ${idx === filtered.length - 1 ? 'disabled' : ''}><i class="fas fa-arrow-left"></i></button>
@@ -2844,7 +2942,7 @@ function showGalleryEditForm(id) {
         <div class="form-group">
             <label>קטגוריה</label>
             <select id="galCategory">
-                ${GALLERY_CATEGORIES.map(c => `<option value="${c.value}" ${img.category === c.value ? 'selected' : ''}>${c.label}</option>`).join('')}
+                ${galleryCategories.map(c => `<option value="${c.value}" ${img.category === c.value ? 'selected' : ''}>${c.label}</option>`).join('')}
             </select>
         </div>
         <div class="modal-footer">
@@ -2908,6 +3006,7 @@ async function uploadGalleryFiles(files) {
     let totalOriginal = 0, totalCompressed = 0;
 
     const maxOrder = Math.max(0, ...galleryItems.map(it => it.order || 0));
+    const uploadCat = ($('uploadCategory') && $('uploadCategory').value) || 'user';
 
     const compressOptions = {
         maxSizeMB: 0.4,            // Target ~400KB max per image
@@ -2944,7 +3043,7 @@ async function uploadGalleryFiles(files) {
             await addDoc(collection(db, 'gallery'), {
                 url,
                 path,
-                category: 'user',
+                category: uploadCat,
                 caption: '',
                 subtitle: '',
                 order: maxOrder + 1 + uploaded,
@@ -3584,6 +3683,10 @@ function init() {
             uploadGalleryFiles(Array.from(e.dataTransfer.files));
         });
     }
+
+    // Gallery categories manager
+    const manageGalleryCatsBtn = $('manageGalleryCatsBtn');
+    if (manageGalleryCatsBtn) manageGalleryCatsBtn.addEventListener('click', () => showGalleryCategoriesForm());
 
     // Elections
     const addElectionBtn = $('addElectionBtn');

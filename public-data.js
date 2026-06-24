@@ -362,6 +362,15 @@ async function loadPublicGallery() {
     if (!grid) return;
 
     try {
+        // Gallery categories (for filter labels/order) — managed from the panel
+        let cats = [];
+        try {
+            const catSnap = await getDoc(doc(db, 'settings', 'galleryCats'));
+            if (catSnap.exists() && Array.isArray(catSnap.data().list)) {
+                cats = catSnap.data().list.slice().sort((a, b) => (a.order || 0) - (b.order || 0));
+            }
+        } catch (e) { /* fall back to static filter buttons */ }
+
         const snap = await getDocs(collection(db, 'gallery'));
         if (snap.empty) return; // Keep static markup as fallback
 
@@ -381,6 +390,9 @@ async function loadPublicGallery() {
         `).join('');
 
 
+        // Rebuild the filter buttons from the categories that actually have images
+        rebuildGalleryFilters(cats, items);
+
         // Trigger re-binding of lightbox/filter handlers if the page exposes them
         if (typeof window.rebindGalleryHandlers === 'function') {
             window.rebindGalleryHandlers();
@@ -388,6 +400,24 @@ async function loadPublicGallery() {
     } catch (e) {
         console.error('Gallery load failed:', e);
     }
+}
+
+function rebuildGalleryFilters(cats, items) {
+    const bar = document.querySelector('.gallery-filter');
+    if (!bar) return;
+    const present = new Set(items.map(it => it.category || 'user'));
+    const labelFor = v => (cats.find(c => c.value === v)?.label) || v;
+
+    // Categories that have images, in the panel's order; then any leftover present values
+    const ordered = cats.filter(c => present.has(c.value)).map(c => c.value);
+    items.forEach(it => {
+        const v = it.category || 'user';
+        if (!ordered.includes(v)) ordered.push(v);
+    });
+    if (!ordered.length) return; // nothing to show — leave static buttons
+
+    bar.innerHTML = `<button class="filter-btn active" data-filter="all">הכל</button>` +
+        ordered.map(v => `<button class="filter-btn" data-filter="${escapeHtml(v)}">${escapeHtml(labelFor(v))}</button>`).join('');
 }
 
 // ============================================

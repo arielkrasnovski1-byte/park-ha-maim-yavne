@@ -513,17 +513,17 @@
     </div>
 
     <script src="script.js?v=20260629g"></script>
-    <script type="module" src="public-data.js?v=20260629i"></script>
+    <script type="module" src="public-data.js?v=20260629j"></script>
     <script>
-        // Filter buttons
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const filter = btn.getAttribute('data-filter');
-                document.querySelectorAll('.gallery-pro-item').forEach(item => {
-                    item.style.display = (filter === 'all' || item.getAttribute('data-category') === filter) ? '' : 'none';
-                });
+        // Filter buttons (event delegation so dynamically-rebuilt buttons work too)
+        document.querySelector('.gallery-filter')?.addEventListener('click', (e) => {
+            const btn = e.target.closest('.filter-btn');
+            if (!btn) return;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const filter = btn.getAttribute('data-filter');
+            document.querySelectorAll('.gallery-pro-item').forEach(item => {
+                item.style.display = (filter === 'all' || item.getAttribute('data-category') === filter) ? '' : 'none';
             });
         });
 
