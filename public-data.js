@@ -108,8 +108,9 @@ async function loadPublicNews() {
                 </a>
             ` : '';
 
-            return `
-                <article class="news-card ${isFeatured ? 'featured' : ''}">
+            const hasImage = !!item.imageUrl;
+            const contentHtml = item.content ? `<p>${richText(item.content)}</p>` : '';
+            const innerHtml = `
                     <div class="news-badge ${badgeClass}">
                         <i class="fas fa-${typeIcon}"></i>
                         <span>${escapeHtml(typeLabel)}</span>
@@ -119,10 +120,20 @@ async function loadPublicNews() {
                         <span>${formatDate(item.date)}</span>
                     </div>
                     <h3>${escapeHtml(item.title)}</h3>
-                    <p>${richText(item.content)}</p>
-                    ${ctaHtml}
-                </article>
-            `;
+                    ${contentHtml}
+                    ${ctaHtml}`;
+
+            if (hasImage) {
+                return `
+                <article class="news-card has-image ${isFeatured ? 'featured' : ''}">
+                    <button class="news-card-image-link" data-news-image="${escapeHtml(item.imageUrl)}" aria-label="הגדל תמונה">
+                        <img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.title || 'מודעה')}" loading="lazy">
+                    </button>
+                    <div class="news-card-body">${innerHtml}</div>
+                </article>`;
+            }
+            return `
+                <article class="news-card ${isFeatured ? 'featured' : ''}">${innerHtml}</article>`;
         }).join('');
 
         // Preserve any "pinned" news cards (with data-pinned="true") - they stay at the top regardless of Firebase content
@@ -131,9 +142,33 @@ async function loadPublicNews() {
             .join('');
 
         container.innerHTML = pinnedHTML + newsHTML;
+
+        // Wire announcement-image clicks to a simple lightbox
+        container.querySelectorAll('[data-news-image]').forEach(btn => {
+            btn.addEventListener('click', () => openNewsLightbox(btn.getAttribute('data-news-image')));
+        });
     } catch (e) {
         console.error('Failed to load news from Firebase:', e);
     }
+}
+
+// Minimal full-screen image viewer for announcement images (works on any page)
+function openNewsLightbox(src) {
+    if (!src) return;
+    let box = document.getElementById('newsLightbox');
+    if (!box) {
+        box = document.createElement('div');
+        box.id = 'newsLightbox';
+        box.className = 'news-lightbox';
+        box.innerHTML = `<button class="news-lightbox-close" aria-label="סגור">&times;</button><img alt="מודעה">`;
+        document.body.appendChild(box);
+        const close = () => { box.classList.remove('active'); document.body.style.overflow = ''; };
+        box.addEventListener('click', (e) => { if (e.target === box || e.target.classList.contains('news-lightbox-close')) close(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+    }
+    box.querySelector('img').src = src;
+    box.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
 // ============================================

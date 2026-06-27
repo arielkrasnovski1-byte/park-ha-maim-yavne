@@ -1357,6 +1357,21 @@ function showNewsForm(existing = null) {
                 </select>
             </div>
         </div>
+        <div class="form-group" style="background:#f0f9ff; padding:16px; border-radius:12px; border:1px solid #bae6fd;">
+            <label style="font-weight:700; margin-bottom:8px; display:block;">🖼️ תמונה / מודעה מצולמת (לא חובה)</label>
+            <div id="newsImagePreviewWrap" style="${existing?.imageUrl ? '' : 'display:none;'} margin-bottom:10px;">
+                <img id="newsImagePreview" src="${escapeHtml(existing?.imageUrl || '')}" style="max-width:100%; max-height:220px; border-radius:10px; display:block;">
+            </div>
+            <input type="hidden" id="newsImageUrl" value="${escapeHtml(existing?.imageUrl || '')}">
+            <input type="hidden" id="newsImagePath" value="${escapeHtml(existing?.imagePath || '')}">
+            <input type="file" id="newsImageInput" accept="image/*" style="display:none;">
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <button type="button" id="newsImageBtn" class="btn-secondary"><i class="fas fa-upload"></i> ${existing?.imageUrl ? 'החלף תמונה' : 'בחר תמונה'}</button>
+                <button type="button" id="newsImageRemoveBtn" class="btn-secondary" style="${existing?.imageUrl ? '' : 'display:none;'} color:#dc2626;"><i class="fas fa-trash"></i> הסר תמונה</button>
+                <span id="newsImageStatus" style="color:#64748b; font-size:13px;"></span>
+            </div>
+            <div style="font-size:12px; color:#64748b; margin-top:8px;">אפשר מודעה שהיא רק תמונה (פלייר) — אז אפשר להשאיר את התוכן ריק. לחיצה על התמונה באתר תגדיל אותה.</div>
+        </div>
         <div class="form-group">
             <label>תוכן ההודעה</label>
             <div style="margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
@@ -1406,12 +1421,19 @@ function showNewsForm(existing = null) {
             date: modal.querySelector('#newsDate').value,
             type: modal.querySelector('#newsType').value,
             content: modal.querySelector('#newsContent').value.trim(),
+            imageUrl: modal.querySelector('#newsImageUrl').value.trim(),
+            imagePath: modal.querySelector('#newsImagePath').value.trim(),
             ctaText: hasCta ? modal.querySelector('#newsCtaText').value.trim() : '',
             ctaUrl: hasCta ? modal.querySelector('#newsCtaUrl').value.trim() : ''
         };
 
-        if (!data.title || !data.content) {
-            showToast('יש למלא כותרת ותוכן', 'error');
+        // Title is always required. Content is optional when there's an image (flyer-only ad).
+        if (!data.title) {
+            showToast('יש למלא כותרת', 'error');
+            return;
+        }
+        if (!data.content && !data.imageUrl) {
+            showToast('יש למלא תוכן או להוסיף תמונה', 'error');
             return;
         }
         if (hasCta && (!data.ctaText || !data.ctaUrl)) {
@@ -1467,6 +1489,49 @@ function showNewsForm(existing = null) {
         const boldBtn = document.getElementById('newsBoldBtn');
         const contentTa = document.getElementById('newsContent');
         boldBtn?.addEventListener('click', () => wrapTextareaSelection(contentTa, '**', '**'));
+
+        // Announcement image: pick / upload / remove
+        const imgBtn = document.getElementById('newsImageBtn');
+        const imgInput = document.getElementById('newsImageInput');
+        const imgRemove = document.getElementById('newsImageRemoveBtn');
+        const imgPreviewWrap = document.getElementById('newsImagePreviewWrap');
+        const imgPreview = document.getElementById('newsImagePreview');
+        const imgUrlField = document.getElementById('newsImageUrl');
+        const imgPathField = document.getElementById('newsImagePath');
+        const imgStatus = document.getElementById('newsImageStatus');
+
+        imgBtn?.addEventListener('click', () => imgInput.click());
+        imgInput?.addEventListener('change', async () => {
+            const file = imgInput.files && imgInput.files[0];
+            if (!file) return;
+            imgStatus.textContent = 'מעלה...';
+            imgBtn.disabled = true;
+            try {
+                const { url, path } = await uploadSingleImage(file, 'news');
+                imgUrlField.value = url;
+                imgPathField.value = path;
+                imgPreview.src = url;
+                imgPreviewWrap.style.display = '';
+                imgRemove.style.display = '';
+                imgBtn.innerHTML = '<i class="fas fa-upload"></i> החלף תמונה';
+                imgStatus.textContent = '✓ הועלתה';
+            } catch (e) {
+                imgStatus.textContent = '';
+                showToast('שגיאה בהעלאת התמונה: ' + e.message, 'error');
+            } finally {
+                imgBtn.disabled = false;
+                imgInput.value = '';
+            }
+        });
+        imgRemove?.addEventListener('click', () => {
+            imgUrlField.value = '';
+            imgPathField.value = '';
+            imgPreview.src = '';
+            imgPreviewWrap.style.display = 'none';
+            imgRemove.style.display = 'none';
+            imgBtn.innerHTML = '<i class="fas fa-upload"></i> בחר תמונה';
+            imgStatus.textContent = '';
+        });
     }, 50);
 }
 
@@ -2996,6 +3061,32 @@ function formatBytes(bytes) {
     if (bytes < 1024) return bytes + ' B';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
     return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+// Compress + upload a single image to Storage; returns { url, path }.
+// Reused by the news editor (announcement images).
+async function uploadSingleImage(file, folder = 'news') {
+    if (DEMO_MODE || !isInitialized) throw new Error('העלאה דורשת Firebase');
+    let toUpload = file;
+    if (file.type.startsWith('image/') && file.type !== 'image/svg+xml' && file.size > 100 * 1024) {
+        try {
+            toUpload = await imageCompression(file, {
+                maxSizeMB: 0.5,
+                maxWidthOrHeight: 1920,
+                useWebWorker: true,
+                fileType: 'image/jpeg',
+                initialQuality: 0.85
+            });
+        } catch (e) {
+            console.warn('Compression failed, uploading original:', e);
+        }
+    }
+    const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+    const path = `${folder}/${Date.now()}_${safeName}`;
+    const ref = storageRef(storage, path);
+    await uploadBytes(ref, toUpload);
+    const url = await getDownloadURL(ref);
+    return { url, path };
 }
 
 async function uploadGalleryFiles(files) {

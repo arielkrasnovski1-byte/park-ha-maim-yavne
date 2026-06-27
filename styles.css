@@ -6909,3 +6909,49 @@ body.a11y-keyboard-focus *:focus {
     font-size: 13px;
     color: rgba(255, 255, 255, 0.78);
 }
+
+/* ============================================
+   News announcement image lightbox
+   ============================================ */
+.news-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+.news-lightbox.active { display: flex; }
+.news-lightbox img {
+    max-width: 95vw;
+    max-height: 90vh;
+    border-radius: 10px;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+    object-fit: contain;
+}
+.news-lightbox-close {
+    position: absolute;
+    top: 18px;
+    inset-inline-end: 24px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border: none;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.news-lightbox-close:hover { background: rgba(255, 255, 255, 0.3); }
+
+/* Announcement image card: clickable image button reset + zoom cue */
+.news-card.has-image .news-card-image-link {
+    border: none;
+    padding: 0;
+    cursor: zoom-in;
+    background: #e2e8f0;
+}
